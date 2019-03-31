@@ -13,7 +13,8 @@ global.expect = chai.expect;
 global.createNixStub = () => {
   let nix = new NixCore({
     ownerUserId: 'user-00001',
-    loginToken: 'example-token'
+    loginToken: 'example-token',
+    logger: { silent: true },
   });
 
   nix.stubService = (moduleName, serviceName, service) => {

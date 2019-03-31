@@ -4,7 +4,7 @@ const findRole = require('../lib/role-utilities').findRole;
 const {
   AutoRoleError,
   RoleNotAddedError,
-} = require('../../errors');
+} = require('../errors');
 
 module.exports = {
   name: 'rmJoinRole',

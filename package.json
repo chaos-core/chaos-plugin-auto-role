@@ -4,7 +4,7 @@
   "description": "Auto Role assignment plugin for Nix-Core Discord Bots",
   "main": "index.js",
   "directories": {
-    "lib": "src/lib"
+    "lib": "lib"
   },
   "scripts": {
     "bot": "node --preserve-symlinks test/bot.js",

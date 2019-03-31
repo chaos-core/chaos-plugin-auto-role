@@ -2,8 +2,8 @@ const Rx = require('rx');
 const Collection = require('discord.js').Collection;
 const ConfigAction = require('nix-core').ConfigAction;
 
-const AutoRoleService = require('../services/auto-role-service');
-const listRoles = require('./list');
+const AutoRoleService = require('../../services/auto-role-service');
+const listRoles = require('../../settings/list');
 
 describe('!settings autoRoles list', function () {
   beforeEach(function () {

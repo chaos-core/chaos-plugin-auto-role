@@ -5,7 +5,7 @@ const DataKeys = require('../lib/data-keys');
 const {
   RoleAlreadyAddedError,
   RoleNotAddedError,
-} = require('../../errors');
+} = require('../errors');
 
 class AutoRoleService extends Service {
   onNixListen() {

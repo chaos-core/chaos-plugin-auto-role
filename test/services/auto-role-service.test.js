@@ -1,7 +1,7 @@
 const Rx = require('rx');
 
-const AutoRoleService = require('./auto-role-service');
-const DataKeys = require('../lib/data-keys');
+const AutoRoleService = require('../../services/auto-role-service');
+const DataKeys = require('../../lib/data-keys');
 
 const {
   RoleAlreadyAddedError,

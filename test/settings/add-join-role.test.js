@@ -1,30 +1,30 @@
 const Collection = require('discord.js').Collection;
 const ConfigAction = require('nix-core').ConfigAction;
 
-const AutoRoleService = require('../services/auto-role-service');
-const rmJoinRole = require('./rm-join-role');
+const AutoRoleService = require('../../services/auto-role-service');
+const addJoinRole = require('../../settings/add-join-role');
 
-describe('!settings autoRole rmJoinRole {role}', function () {
+describe('!settings autoRole addJoinRole {role}', function () {
   beforeEach(function () {
     this.nix = createNixStub();
     this.autoRoleService = new AutoRoleService(this.nix);
 
     this.nix.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
 
-    this.rmJoinRole = new ConfigAction(rmJoinRole);
-    this.rmJoinRole.nix = this.nix;
+    this.addJoinRole = new ConfigAction(addJoinRole);
+    this.addJoinRole.nix = this.nix;
 
-    this.rmJoinRole.configureAction();
+    this.addJoinRole.configureAction();
   });
 
   context('#configureAction', function () {
     it('loads the AutoRoleService', function () {
-      expect(this.rmJoinRole.autoRoleService).to.eq(this.autoRoleService);
+      expect(this.addJoinRole.autoRoleService).to.eq(this.autoRoleService);
     });
   });
 
   describe('#run', function () {
-    beforeEach(function (done) {
+    beforeEach(function () {
       this.guild = {
         id: '22222',
         name: 'Test Guild',
@@ -39,10 +39,6 @@ describe('!settings autoRole rmJoinRole {role}', function () {
           role: this.role.id,
         },
       };
-
-      this.autoRoleService
-        .addJoinRole(this.guild, this.role)
-        .subscribe(() => done(), (error) => done(error));
     });
 
     context('when a role is not given', function () {
@@ -51,32 +47,38 @@ describe('!settings autoRole rmJoinRole {role}', function () {
       });
 
       it('emits an error message', function (done) {
-        this.rmJoinRole.run(this.context)
-          .do((response) => {
-            expect(response).to.deep.equal({
-              status: 400,
-              content: 'The name of a role to remove is required',
-            });
+        this.addJoinRole.run(this.context)
+          .toArray()
+          .do((emitted) => {
+            expect(emitted).to.deep.equal([
+              {
+                status: 400,
+                content: 'The name of a role to assign is required',
+              },
+            ]);
           })
           .subscribe(() => done(), (error) => done(error));
       });
     });
 
-    context('when the role is not on the list', function () {
+    context('when the role is already on the list', function () {
       beforeEach(function (done) {
         this.guild.roles.set(this.role.id, this.role);
 
-        this.autoRoleService.removeJoinRole(this.guild, this.role)
+        this.autoRoleService.addJoinRole(this.guild, this.role)
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
       it('emits an error message', function (done) {
-        this.rmJoinRole.run(this.context)
-          .do((response) => {
-            expect(response).to.deep.equal({
-              status: 400,
-              message: 'That role is not on the list.',
-            });
+        this.addJoinRole.run(this.context)
+          .toArray()
+          .do((emitted) => {
+            expect(emitted).to.deep.equal([
+              {
+                status: 400,
+                message: 'That role is already being granted to new users.',
+              },
+            ]);
           })
           .subscribe(() => done(), (error) => done(error));
       });
@@ -98,23 +100,27 @@ describe('!settings autoRole rmJoinRole {role}', function () {
           });
 
           it('adds the correct role to the list', function (done) {
-            sinon.spy(this.autoRoleService, 'removeJoinRole');
+            sinon.spy(this.autoRoleService, 'addJoinRole');
 
-            this.rmJoinRole.run(this.context)
+            this.addJoinRole.run(this.context)
+              .toArray()
               .do(() => {
-                expect(this.autoRoleService.removeJoinRole)
+                expect(this.autoRoleService.addJoinRole)
                   .to.have.been.calledWith(this.guild, this.role);
               })
               .subscribe(() => done(), (error) => done(error));
           });
 
           it('emits a success message', function (done) {
-            this.rmJoinRole.run(this.context)
-              .do((response) => {
-                expect(response).to.deep.equal({
-                  status: 200,
-                  content: 'the role Role1 has been removed from the list.',
-                });
+            this.addJoinRole.run(this.context)
+              .toArray()
+              .do((emitted) => {
+                expect(emitted).to.deep.equal([
+                  {
+                    status: 200,
+                    content: 'the role Role1 will be granted to users when they join',
+                  },
+                ]);
               })
               .subscribe(() => done(), (error) => done(error));
           });
@@ -122,12 +128,15 @@ describe('!settings autoRole rmJoinRole {role}', function () {
 
         context('when the role does not exist in the guild', function () {
           it('emits an error message', function (done) {
-            this.rmJoinRole.run(this.context)
-              .do((response) => {
-                expect(response).to.deep.equal({
-                  status: 404,
-                  content: `The role '${input.value}' could not be found.`,
-                });
+            this.addJoinRole.run(this.context)
+              .toArray()
+              .do((emitted) => {
+                expect(emitted).to.deep.equal([
+                  {
+                    status: 404,
+                    content: `The role '${input.value}' could not be found.`,
+                  },
+                ]);
               })
               .subscribe(() => done(), (error) => done(error));
           });
