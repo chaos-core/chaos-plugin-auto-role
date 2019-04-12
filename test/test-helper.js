@@ -2,7 +2,7 @@ const chai = require("chai");
 const sinon = require("sinon");
 const sinonChai = require("sinon-chai");
 const chaiSubset = require("chai-subset");
-const NixCore = require('nix-core');
+const ChaosCore = require('chaos-core');
 
 chai.use(sinonChai);
 chai.use(chaiSubset);
@@ -10,19 +10,19 @@ chai.use(chaiSubset);
 global.sinon = sinon;
 global.expect = chai.expect;
 
-global.createNixStub = () => {
-  let nix = new NixCore({
+global.createChaosStub = () => {
+  let chaos = new ChaosCore({
     ownerUserId: 'user-00001',
     loginToken: 'example-token',
     logger: { silent: true },
   });
 
-  nix.stubService = (moduleName, serviceName, service) => {
-    let serviceKey = `${moduleName}.${serviceName}`.toLowerCase();
-    nix.servicesManager._services[serviceKey] = service;
+  chaos.stubService = (pluginName, serviceName, service) => {
+    let serviceKey = `${pluginName}.${serviceName}`.toLowerCase();
+    chaos.servicesManager._services[serviceKey] = service;
   };
 
-  sinon.stub(nix, 'handleError').callsFake((error) => { throw error });
+  sinon.stub(chaos, 'handleError').callsFake((error) => { throw error });
 
-  return nix;
+  return chaos;
 };

@@ -1,18 +1,18 @@
 const Collection = require('discord.js').Collection;
-const ConfigAction = require('nix-core').ConfigAction;
+const ConfigAction = require('chaos-core').ConfigAction;
 
 const AutoRoleService = require('../../services/auto-role-service');
 const rmJoinRole = require('../../settings/rm-join-role');
 
 describe('!settings autoRole rmJoinRole {role}', function () {
   beforeEach(function () {
-    this.nix = createNixStub();
-    this.autoRoleService = new AutoRoleService(this.nix);
+    this.chaos = createChaosStub();
+    this.autoRoleService = new AutoRoleService(this.chaos);
 
-    this.nix.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
+    this.chaos.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
 
     this.rmJoinRole = new ConfigAction(rmJoinRole);
-    this.rmJoinRole.nix = this.nix;
+    this.rmJoinRole.chaos = this.chaos;
 
     this.rmJoinRole.configureAction();
   });

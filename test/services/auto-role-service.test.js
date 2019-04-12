@@ -10,8 +10,8 @@ const {
 
 describe('AutoRoleService', function () {
   beforeEach(function () {
-    this.nix = createNixStub();
-    this.autoRoleService = new AutoRoleService(this.nix);
+    this.chaos = createChaosStub();
+    this.autoRoleService = new AutoRoleService(this.chaos);
 
     this.guild = {
       id: '0000-guild-1',
@@ -23,7 +23,7 @@ describe('AutoRoleService', function () {
   describe('#getJoinRoleIds', function () {
     context('when there are no roles', function () {
       beforeEach(function (done) {
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, [])
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [])
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
@@ -47,7 +47,7 @@ describe('AutoRoleService', function () {
           '0000-role-3',
         ];
 
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roleIds)
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roleIds)
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
@@ -75,7 +75,7 @@ describe('AutoRoleService', function () {
 
     it('it saves the role id list', function (done) {
       this.autoRoleService.setJoinRoleIds(this.guild, this.roleIds)
-        .flatMap(() => this.nix.getGuildData(this.guild.id, DataKeys.JoinRoles))
+        .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
         .toArray()
         .do((emitted) => {
           expect(emitted).to.deep.equal([
@@ -91,7 +91,7 @@ describe('AutoRoleService', function () {
   describe('#getJoinRoles', function () {
     context('when there are no roles', function () {
       beforeEach(function (done) {
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, [])
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [])
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
@@ -117,7 +117,7 @@ describe('AutoRoleService', function () {
 
         this.roles.forEach((role) => this.guild.roles.set(role.id, role));
 
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roles.map((role) => role.id))
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roles.map((role) => role.id))
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
@@ -158,7 +158,7 @@ describe('AutoRoleService', function () {
 
     it('it updates the join role list', function (done) {
       this.autoRoleService.addJoinRole(this.guild, this.role)
-        .flatMap(() => this.nix.getGuildData(this.guild.id, DataKeys.JoinRoles))
+        .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
         .toArray()
         .do((emitted) => {
           expect(emitted).to.deep.equal([
@@ -172,13 +172,13 @@ describe('AutoRoleService', function () {
       beforeEach(function (done) {
         this.preExistingRole = {id: '00000-role-2', name: 'role-2'};
 
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.preExistingRole.id])
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.preExistingRole.id])
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
       it('appends the role to the list', function (done) {
         this.autoRoleService.addJoinRole(this.guild, this.role)
-          .flatMap(() => this.nix.getGuildData(this.guild.id, DataKeys.JoinRoles))
+          .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
           .toArray()
           .do((emitted) => {
             expect(emitted).to.deep.equal([
@@ -194,7 +194,7 @@ describe('AutoRoleService', function () {
 
     context('when the role is already on the list', function () {
       beforeEach(function (done) {
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id])
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id])
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
@@ -214,14 +214,14 @@ describe('AutoRoleService', function () {
     beforeEach(function (done) {
       this.role = {id: '00000-role-1', name: 'role-1'};
 
-      this.nix
+      this.chaos
         .setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id])
         .subscribe(() => {}, (error) => done(error), () => done());
     });
 
     it('it updates the join role list', function (done) {
       this.autoRoleService.removeJoinRole(this.guild, this.role)
-        .flatMap(() => this.nix.getGuildData(this.guild.id, DataKeys.JoinRoles))
+        .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
         .toArray()
         .do((emitted) => {
           expect(emitted).to.deep.equal([
@@ -235,13 +235,13 @@ describe('AutoRoleService', function () {
       beforeEach(function (done) {
         this.preExistingRole = {id: '00000-role-2', name: 'role-2'};
 
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id, this.preExistingRole.id])
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id, this.preExistingRole.id])
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 
       it('appends the role to the list', function (done) {
         this.autoRoleService.removeJoinRole(this.guild, this.role)
-          .flatMap(() => this.nix.getGuildData(this.guild.id, DataKeys.JoinRoles))
+          .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
           .toArray()
           .do((emitted) => {
             expect(emitted).to.deep.equal([
@@ -256,7 +256,7 @@ describe('AutoRoleService', function () {
 
     context('when the role is not on the list', function () {
       beforeEach(function (done) {
-        this.nix.setGuildData(this.guild.id, DataKeys.JoinRoles, [])
+        this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [])
           .subscribe(() => {}, (error) => done(error), () => done());
       });
 

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/nix-plugin-auto-role.iml" filepath="$PROJECT_DIR$/.idea/nix-plugin-auto-role.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/chaos-plugin-auto-role.iml" filepath="$PROJECT_DIR$/.idea/chaos-plugin-auto-role.iml" />
     </modules>
   </component>
 </project>

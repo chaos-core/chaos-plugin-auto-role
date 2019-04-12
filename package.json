@@ -1,7 +1,7 @@
 {
-  "name": "nix-plugin-auto-role",
+  "name": "chaos-plugin-auto-role",
   "version": "1.0.0",
-  "description": "Auto Role assignment plugin for Nix-Core Discord Bots",
+  "description": "Auto Role assignment plugin for ChaosCore Discord Bots",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -12,25 +12,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nix-core/nix-plugin-auto-roles.git"
+    "url": "git+https://github.com/chaos-core/chaos-plugin-auto-roles.git"
   },
   "author": "Stephen A. Wilson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nix-core/nix-plugin-auto-roles/issues"
+    "url": "https://github.com/chaos-core/chaos-plugin-auto-roles/issues"
   },
-  "homepage": "https://github.com/nix-core/nix-plugin-auto-roles#readme",
+  "homepage": "https://github.com/chaos-core/chaos-plugin-auto-roles#readme",
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-subset": "^1.6.0",
+    "chaos-core": "github:chaos-core/chaos-core#v2.3.0",
+    "chaos-data-disk": "github:chaos-core/chaos-data-disk#master",
+    "chaos-data-memory": "github:chaos-core/chaos-data-memory#master",
+    "discord.js": "^11.4.2",
     "eslint": "^4.14.0",
     "mocha": "^5.2.0",
-    "nix-data-memory": "github:nix-core/nix-data-memory#v0.0.2",
     "sinon": "^6.1.4",
-    "sinon-chai": "^3.2.0",
-    "discord.js": "^11.4.2",
-    "nix-core": "git://github.com/nix-core/nix-core.git#develop",
-    "nix-data-disk": "git://github.com/nix-core/nix-data-disk.git#v0.0.0"
+    "sinon-chai": "^3.2.0"
   },
   "dependencies": {
     "rx": "^4.1.0"

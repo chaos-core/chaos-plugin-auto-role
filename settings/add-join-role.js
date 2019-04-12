@@ -19,7 +19,7 @@ module.exports = {
   ],
 
   configureAction() {
-    this.autoRoleService = this.nix.getService('autoRoles', 'AutoRoleService');
+    this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
   },
 
   run(context) {

@@ -1,19 +1,19 @@
 const Rx = require('rx');
 const Collection = require('discord.js').Collection;
-const ConfigAction = require('nix-core').ConfigAction;
+const ConfigAction = require('chaos-core').ConfigAction;
 
 const AutoRoleService = require('../../services/auto-role-service');
 const listRoles = require('../../settings/list');
 
 describe('!settings autoRoles list', function () {
   beforeEach(function () {
-    this.nix = createNixStub();
-    this.autoRoleService = new AutoRoleService(this.nix);
+    this.chaos = createChaosStub();
+    this.autoRoleService = new AutoRoleService(this.chaos);
 
-    this.nix.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
+    this.chaos.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
 
     this.listRoles = new ConfigAction(listRoles);
-    this.listRoles.nix = this.nix;
+    this.listRoles.chaos = this.chaos;
 
     this.listRoles.configureAction();
   });

@@ -205,6 +205,20 @@ chalk@^2.0.0, chalk@^2.1.0:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
+"chaos-core@github:chaos-core/chaos-core#v2.3.0":
+  version "2.3.0"
+  resolved "https://codeload.github.com/chaos-core/chaos-core/tar.gz/4e9209a26683b712d21ddd053e25d0142f8ca77d"
+  dependencies:
+    winston "^3.0.0"
+
+"chaos-data-disk@github:chaos-core/chaos-data-disk#master":
+  version "0.0.0"
+  resolved "https://codeload.github.com/chaos-core/chaos-data-disk/tar.gz/1b269001da64686075150c9e7aa65f660407ba13"
+
+"chaos-data-memory@github:chaos-core/chaos-data-memory#master":
+  version "1.0.0"
+  resolved "https://codeload.github.com/chaos-core/chaos-data-memory/tar.gz/234076c90fbd57f178ec45e89fcc7390b6eac263"
+
 chardet@^0.4.0:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.4.2.tgz#b5473b33dc97c424e5d98dc87d55d4d8a29c8bf2"
@@ -717,9 +731,9 @@ js-tokens@^3.0.2:
   integrity sha1-mGbfOVECEw449/mWvOtlRDIJwls=
 
 js-yaml@^3.9.1:
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.0.tgz#38ee7178ac0eea2c97ff6d96fff4b18c7d8cf98e"
-  integrity sha512-pZZoSxcCYco+DIKBTimr67J6Hy+EYGZDY/HCWC+iAEA9h1ByhMXAIVUXMcMFpOCxQ/xjXmPI2MkDL5HRm5eFrQ==
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
+  integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -865,20 +879,6 @@ nise@^1.4.5:
     lolex "^2.3.2"
     path-to-regexp "^1.7.0"
 
-"nix-core@git://github.com/nix-core/nix-core.git#develop":
-  version "2.1.0-rc"
-  resolved "git://github.com/nix-core/nix-core.git#dc7042fae860bbd1083bddeaa19473b64a02a5a8"
-  dependencies:
-    winston "^3.0.0"
-
-"nix-data-disk@git://github.com/nix-core/nix-data-disk.git#v0.0.0":
-  version "0.0.0"
-  resolved "git://github.com/nix-core/nix-data-disk.git#b44ab7815e65e4d2a65816c0c6f029e599880a71"
-
-"nix-data-memory@github:nix-core/nix-data-memory#v0.0.2":
-  version "0.0.2"
-  resolved "https://codeload.github.com/nix-core/nix-data-memory/tar.gz/d1cb161b7ca4be4bc85ca2c73ed60a4f81824745"
-
 object-assign@^4.0.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
@@ -986,9 +986,9 @@ readable-stream@^2.2.2, readable-stream@^2.3.6:
     util-deprecate "~1.0.1"
 
 readable-stream@^3.1.1:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.2.0.tgz#de17f229864c120a9f56945756e4f32c4045245d"
-  integrity sha512-RV20kLjdmpZuTF1INEb9IA3L68Nmi+Ri7ppZqo78wj//Pn62fCoJyV9zalccNzDD/OuJpMG4f+pfMl8+L6QdGw==
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-3.3.0.tgz#cb8011aad002eb717bf040291feba8569c986fb9"
+  integrity sha512-EsI+s3k3XsW+fU8fQACLN59ky34AZ14LoeVZpYwmZvldCFo0r0gnelwF2TcMjLor/BTL5aDJVBMkss0dthToPw==
   dependencies:
     inherits "^2.0.3"
     string_decoder "^1.1.1"

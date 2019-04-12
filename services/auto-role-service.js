@@ -1,5 +1,5 @@
 const Rx = require('rx');
-const Service = require('nix-core').Service;
+const Service = require('chaos-core').Service;
 
 const DataKeys = require('../lib/data-keys');
 const {
@@ -8,12 +8,12 @@ const {
 } = require('../errors');
 
 class AutoRoleService extends Service {
-  onNixListen() {
-    this.nix.streams.guildMemberAdd$
+  onListen() {
+    this.chaos.streams.guildMemberAdd$
       .flatMap((newMember) => this.handleMemberJoin(newMember))
       .subscribe(
         () => {},
-        (error) => this.nix.handleError(error, [
+        (error) => this.chaos.handleError(error, [
           { name: "Event", value: "guildMemberAdd$" },
         ])
       )
@@ -29,7 +29,7 @@ class AutoRoleService extends Service {
 
   getJoinRoleIds(guild) {
     return Rx.Observable.of('')
-      .flatMap(() => this.nix.getGuildData(guild.id, DataKeys.JoinRoles))
+      .flatMap(() => this.chaos.getGuildData(guild.id, DataKeys.JoinRoles))
       .flatMap((roleIds) => Rx.Observable.if(
         () => typeof roleIds === "undefined",
         Rx.Observable.of([]),
@@ -39,7 +39,7 @@ class AutoRoleService extends Service {
 
   setJoinRoleIds(guild, roleIds) {
     return Rx.Observable.of('')
-      .flatMap(() => this.nix.setGuildData(guild.id, DataKeys.JoinRoles, roleIds))
+      .flatMap(() => this.chaos.setGuildData(guild.id, DataKeys.JoinRoles, roleIds))
   }
 
   getJoinRoles(guild) {
