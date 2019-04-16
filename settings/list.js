@@ -5,7 +5,7 @@ module.exports = {
   name: 'list',
   description: "list all configured roles",
 
-  configureAction() {
+  onListen() {
     this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
   },
 

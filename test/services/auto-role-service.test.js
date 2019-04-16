@@ -1,4 +1,5 @@
 const Rx = require('rx');
+const ChaosCore = require('chaos-core');
 
 const AutoRoleService = require('../../services/auto-role-service');
 const DataKeys = require('../../lib/data-keys');
@@ -10,7 +11,7 @@ const {
 
 describe('AutoRoleService', function () {
   beforeEach(function () {
-    this.chaos = createChaosStub();
+    this.chaos = ChaosCore.test.createChaosStub();
     this.autoRoleService = new AutoRoleService(this.chaos);
 
     this.guild = {

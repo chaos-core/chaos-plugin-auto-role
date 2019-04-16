@@ -18,7 +18,7 @@ module.exports = {
     },
   ],
 
-  configureAction() {
+  onListen() {
     this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
   },
 
