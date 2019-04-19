@@ -2,6 +2,8 @@ const DataKeys = require('./lib/data-keys');
 
 module.exports = {
   name: "autoRoles",
+  description: "Grants a role to users when they join",
+  
   defaultData: [
     {keyword: DataKeys.JoinRoles, data: []}
   ],
