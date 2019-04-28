@@ -8,15 +8,16 @@ let bot = new ChaosCore({
     type: "disk",
     dataDir: Path.join(__dirname, '../data'),
   },
-  ...localConfig
+  ...localConfig,
 });
 
-bot.addModule(require('../index'));
+bot.addPlugin(require('../index'));
 
 bot.listen()
   .subscribe(
     () => {},
     (error) => {
+      // eslint-disable-next-line no-console
       console.error(error);
       process.exit(1);
     },

@@ -8,7 +8,9 @@
   },
   "scripts": {
     "bot": "node --preserve-symlinks test/bot.js",
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint .",
+    "lint-watch": "esw . -w"
   },
   "repository": {
     "type": "git",
@@ -20,19 +22,23 @@
     "url": "https://github.com/chaos-core/chaos-plugin-auto-roles/issues"
   },
   "homepage": "https://github.com/chaos-core/chaos-plugin-auto-roles#readme",
+  "peerDependencies": {
+    "rxjs": "^6.5.1"
+  },
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-subset": "^1.6.0",
-    "chaos-core": "github:chaos-core/chaos-core#3.0.0",
-    "chaos-data-disk": "github:chaos-core/chaos-data-disk#master",
-    "chaos-data-memory": "github:chaos-core/chaos-data-memory#master",
+    "chaos-core": "github:chaos-core/chaos-core#RxJS-6",
+    "chaos-data-disk": "github:chaos-core/chaos-data-disk#RxJs-6",
+    "chaos-data-memory": "github:chaos-core/chaos-data-memory#RxJs-6",
     "discord.js": "^11.4.2",
-    "eslint": "^4.14.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-chai-expect": "^2.0.1",
+    "eslint-watch": "^5.1.2",
     "mocha": "^5.2.0",
+    "nyc": "^14.0.0",
+    "rxjs": "^6.5.1",
     "sinon": "^6.1.4",
     "sinon-chai": "^3.2.0"
-  },
-  "dependencies": {
-    "rx": "^4.1.0"
   }
 }

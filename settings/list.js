@@ -1,4 +1,5 @@
-const Rx = require('rx');
+const {of} = require('rxjs');
+const {map, flatMap} = require('rxjs/operators');
 const RichEmbed = require('discord.js').RichEmbed;
 
 module.exports = {
@@ -10,12 +11,11 @@ module.exports = {
   },
 
   run(context) {
-    return Rx.Observable.of('')
-      .flatMap(() =>
-        this.autoRoleService.getJoinRoles(context.guild)
-          .map((roles) => roles.map((r) => r.name))
-      )
-      .map((joinRoles) => {
+    return of('').pipe(
+      flatMap(() => this.autoRoleService.getJoinRoles(context.guild).pipe(
+        map((roles) => roles.map((r) => r.name)),
+      )),
+      map((joinRoles) => {
         let embed = new RichEmbed();
         embed.addField("Join Roles", joinRoles.length >= 1 ? joinRoles.join(', ') : "[None]");
 
@@ -24,6 +24,7 @@ module.exports = {
           content: "Here are all the configured roles:",
           embed: embed,
         };
-      });
+      }),
+    );
   },
 };

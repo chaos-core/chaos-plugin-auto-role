@@ -1,3 +1,4 @@
+const {tap} = require('rxjs/operators');
 const Collection = require('discord.js').Collection;
 const ConfigAction = require('chaos-core').ConfigAction;
 const ChaosCore = require("chaos-core");
@@ -52,14 +53,14 @@ describe('!settings autoRole rmJoinRole {role}', function () {
       });
 
       it('emits an error message', function (done) {
-        this.rmJoinRole.run(this.context)
-          .do((response) => {
+        this.rmJoinRole.run(this.context).pipe(
+          tap((response) => {
             expect(response).to.deep.equal({
               status: 400,
               content: 'The name of a role to remove is required',
             });
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
 
@@ -72,14 +73,14 @@ describe('!settings autoRole rmJoinRole {role}', function () {
       });
 
       it('emits an error message', function (done) {
-        this.rmJoinRole.run(this.context)
-          .do((response) => {
+        this.rmJoinRole.run(this.context).pipe(
+          tap((response) => {
             expect(response).to.deep.equal({
               status: 400,
               message: 'That role is not on the list.',
             });
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
 
@@ -101,36 +102,36 @@ describe('!settings autoRole rmJoinRole {role}', function () {
           it('adds the correct role to the list', function (done) {
             sinon.spy(this.autoRoleService, 'removeJoinRole');
 
-            this.rmJoinRole.run(this.context)
-              .do(() => {
+            this.rmJoinRole.run(this.context).pipe(
+              tap(() => {
                 expect(this.autoRoleService.removeJoinRole)
                   .to.have.been.calledWith(this.guild, this.role);
-              })
-              .subscribe(() => done(), (error) => done(error));
+              }),
+            ).subscribe(() => done(), (error) => done(error));
           });
 
           it('emits a success message', function (done) {
-            this.rmJoinRole.run(this.context)
-              .do((response) => {
+            this.rmJoinRole.run(this.context).pipe(
+              tap((response) => {
                 expect(response).to.deep.equal({
                   status: 200,
                   content: 'the role Role1 has been removed from the list.',
                 });
-              })
-              .subscribe(() => done(), (error) => done(error));
+              }),
+            ).subscribe(() => done(), (error) => done(error));
           });
         });
 
         context('when the role does not exist in the guild', function () {
           it('emits an error message', function (done) {
-            this.rmJoinRole.run(this.context)
-              .do((response) => {
+            this.rmJoinRole.run(this.context).pipe(
+              tap((response) => {
                 expect(response).to.deep.equal({
                   status: 404,
                   content: `The role '${input.value}' could not be found.`,
                 });
-              })
-              .subscribe(() => done(), (error) => done(error));
+              }),
+            ).subscribe(() => done(), (error) => done(error));
           });
         });
       });

@@ -1,4 +1,5 @@
-const Rx = require('rx');
+const {from} = require('rxjs');
+const {tap, toArray, flatMap, concatMap, find, count} = require('rxjs/operators');
 const Collection = require('discord.js').Collection;
 const ConfigAction = require('chaos-core').ConfigAction;
 const ChaosCore = require("chaos-core");
@@ -39,35 +40,35 @@ describe('!settings autoRoles list', function () {
     });
 
     it('emits a single response', function (done) {
-      this.listRoles.run(this.context)
-        .count(() => true)
-        .do((count) => expect(count).to.equal(1))
-        .subscribe(() => done(), (error) => done(error));
+      this.listRoles.run(this.context).pipe(
+        count(() => true),
+        tap((count) => expect(count).to.equal(1)),
+      ).subscribe(() => done(), (error) => done(error));
     });
 
     it('emits an embed', function (done) {
-      this.listRoles.run(this.context)
-        .do((response) => expect(response).to.have.property('embed'))
-        .subscribe(() => done(), (error) => done(error));
+      this.listRoles.run(this.context).pipe(
+        tap((response) => expect(response).to.have.property('embed')),
+      ).subscribe(() => done(), (error) => done(error));
     });
 
     describe('roles list', function () {
       it('has section for the join roles', function (done) {
-        this.listRoles.run(this.context)
-          .flatMap((response) => response.embed.fields)
-          .find((field) => field.name === 'Join Roles')
-          .do((field) => expect(field).to.not.be.undefined)
-          .subscribe(() => done(), (error) => done(error));
+        this.listRoles.run(this.context).pipe(
+          flatMap((response) => response.embed.fields),
+          find((field) => field.name === 'Join Roles'),
+          tap((field) => expect(field).to.not.be.undefined),
+        ).subscribe(() => done(), (error) => done(error));
       });
 
       describe('join roles', function () {
         context('when there are no roles on the list', function () {
           it('adds a "Join Roles" field, with an empty list', function (done) {
-            this.listRoles.run(this.context)
-              .flatMap((response) => response.embed.fields)
-              .find((field) => field.name === 'Join Roles')
-              .do((field) => expect(field.value).to.eq('[None]'))
-              .subscribe(() => done(), (error) => done(error));
+            this.listRoles.run(this.context).pipe(
+              flatMap((response) => response.embed.fields),
+              find((field) => field.name === 'Join Roles'),
+              tap((field) => expect(field.value).to.eq('[None]')),
+            ).subscribe(() => done(), (error) => done(error));
           });
         });
 
@@ -79,19 +80,19 @@ describe('!settings autoRoles list', function () {
               {id: '0000-role-3', name: 'Role3'},
             ];
 
-            Rx.Observable.from(this.roles)
-              .do((role) => this.guild.roles.set(role.id, role))
-              .concatMap((role) => this.autoRoleService.addJoinRole(this.guild, role))
-              .toArray()
-              .subscribe(() => done(), (error) => done(error));
+            from(this.roles).pipe(
+              tap((role) => this.guild.roles.set(role.id, role)),
+              concatMap((role) => this.autoRoleService.addJoinRole(this.guild, role)),
+              toArray(),
+            ).subscribe(() => done(), (error) => done(error));
           });
 
           it('adds a "Join Roles" field, with a list of all assigned roles', function (done) {
-            this.listRoles.run(this.context)
-              .flatMap((response) => response.embed.fields)
-              .find((field) => field.name === 'Join Roles')
-              .do((field) => expect(field.value).to.eq('Role1, Role2, Role3'))
-              .subscribe(() => done(), (error) => done(error));
+            this.listRoles.run(this.context).pipe(
+              flatMap((response) => response.embed.fields),
+              find((field) => field.name === 'Join Roles'),
+              tap((field) => expect(field.value).to.eq('Role1, Role2, Role3')),
+            ).subscribe(() => done(), (error) => done(error));
           });
         });
       });

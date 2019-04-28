@@ -1,4 +1,5 @@
-const Rx = require('rx');
+const {EMPTY} = require('rxjs');
+const {tap, toArray, flatMap, catchError} = require('rxjs/operators');
 const ChaosCore = require('chaos-core');
 
 const AutoRoleService = require('../../services/auto-role-service');
@@ -29,14 +30,14 @@ describe('AutoRoleService', function () {
       });
 
       it('emits an empty array', function (done) {
-        this.autoRoleService.getJoinRoleIds(this.guild)
-          .toArray()
-          .do((emitted) => {
+        this.autoRoleService.getJoinRoleIds(this.guild).pipe(
+          toArray(),
+          tap((emitted) => {
             expect(emitted).to.deep.equal([
               [],
             ]);
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
 
@@ -53,14 +54,14 @@ describe('AutoRoleService', function () {
       });
 
       it('emits an array of role ids', function (done) {
-        this.autoRoleService.getJoinRoleIds(this.guild)
-          .toArray()
-          .do((emitted) => {
+        this.autoRoleService.getJoinRoleIds(this.guild).pipe(
+          toArray(),
+          tap((emitted) => {
             expect(emitted).to.deep.equal([
               this.roleIds,
             ]);
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
   });
@@ -75,17 +76,15 @@ describe('AutoRoleService', function () {
     });
 
     it('it saves the role id list', function (done) {
-      this.autoRoleService.setJoinRoleIds(this.guild, this.roleIds)
-        .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
-        .toArray()
-        .do((emitted) => {
+      this.autoRoleService.setJoinRoleIds(this.guild, this.roleIds).pipe(
+        flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles)),
+        toArray(),
+        tap((emitted) => {
           expect(emitted).to.deep.equal([
             this.roleIds,
           ]);
-        })
-        .subscribe(() => done(), (error) => done(error));
-
-      expect(stream$).to.emit([this.roleIds]).and.complete(done);
+        }),
+      ).subscribe(() => done(), (error) => done(error));
     });
   });
 
@@ -97,14 +96,14 @@ describe('AutoRoleService', function () {
       });
 
       it('emits an empty array', function (done) {
-        this.autoRoleService.getJoinRoles(this.guild)
-          .toArray()
-          .do((emitted) => {
+        this.autoRoleService.getJoinRoles(this.guild).pipe(
+          toArray(),
+          tap((emitted) => {
             expect(emitted).to.deep.equal([
               [],
             ]);
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
 
@@ -123,14 +122,14 @@ describe('AutoRoleService', function () {
       });
 
       it('emits an array of roles for each id', function (done) {
-        this.autoRoleService.getJoinRoles(this.guild)
-          .toArray()
-          .do((emitted) => {
+        this.autoRoleService.getJoinRoles(this.guild).pipe(
+          toArray(),
+          tap((emitted) => {
             expect(emitted).to.deep.equal([
               this.roles,
             ]);
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
 
       context('when not all roles exist in the guild', function () {
@@ -139,14 +138,14 @@ describe('AutoRoleService', function () {
         });
 
         it('emits an array of roles that were found', function (done) {
-          this.autoRoleService.getJoinRoles(this.guild)
-            .toArray()
-            .do((emitted) => {
+          this.autoRoleService.getJoinRoles(this.guild).pipe(
+            toArray(),
+            tap((emitted) => {
               expect(emitted).to.deep.equal([
                 this.roles.slice(1),
               ]);
-            })
-            .subscribe(() => done(), (error) => done(error));
+            }),
+          ).subscribe(() => done(), (error) => done(error));
         });
       });
     });
@@ -158,15 +157,15 @@ describe('AutoRoleService', function () {
     });
 
     it('it updates the join role list', function (done) {
-      this.autoRoleService.addJoinRole(this.guild, this.role)
-        .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
-        .toArray()
-        .do((emitted) => {
+      this.autoRoleService.addJoinRole(this.guild, this.role).pipe(
+        flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles)),
+        toArray(),
+        tap((emitted) => {
           expect(emitted).to.deep.equal([
             [this.role.id],
           ]);
-        })
-        .subscribe(() => done(), (error) => done(error));
+        }),
+      ).subscribe(() => done(), (error) => done(error));
     });
 
     context('when there are other roles on the list', function () {
@@ -178,18 +177,18 @@ describe('AutoRoleService', function () {
       });
 
       it('appends the role to the list', function (done) {
-        this.autoRoleService.addJoinRole(this.guild, this.role)
-          .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
-          .toArray()
-          .do((emitted) => {
+        this.autoRoleService.addJoinRole(this.guild, this.role).pipe(
+          flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles)),
+          toArray(),
+          tap((emitted) => {
             expect(emitted).to.deep.equal([
               [
                 this.preExistingRole.id,
                 this.role.id,
               ],
             ]);
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
 
@@ -200,13 +199,13 @@ describe('AutoRoleService', function () {
       });
 
       it('throws an RoleAlreadyAddedError', function (done) {
-        this.autoRoleService.addJoinRole(this.guild, this.role)
-          .do(() => { throw new Error('Expected an error to be thrown.'); })
-          .catch((error) => {
+        this.autoRoleService.addJoinRole(this.guild, this.role).pipe(
+          toArray(),
+          catchError((error) => {
             expect(error).to.be.an.instanceof(RoleAlreadyAddedError);
-            return Rx.Observable.return(true);
-          })
-          .subscribe(() => done(), (error) => done(error));
+            return EMPTY;
+          }),
+        ).subscribe(() => done(new Error('Expected an error to be thrown.')), (error) => done(error), () => done());
       });
     });
   });
@@ -215,21 +214,20 @@ describe('AutoRoleService', function () {
     beforeEach(function (done) {
       this.role = {id: '00000-role-1', name: 'role-1'};
 
-      this.chaos
-        .setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id])
+      this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id])
         .subscribe(() => {}, (error) => done(error), () => done());
     });
 
     it('it updates the join role list', function (done) {
-      this.autoRoleService.removeJoinRole(this.guild, this.role)
-        .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
-        .toArray()
-        .do((emitted) => {
+      this.autoRoleService.removeJoinRole(this.guild, this.role).pipe(
+        flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles)),
+        toArray(),
+        tap((emitted) => {
           expect(emitted).to.deep.equal([
             [],
           ]);
-        })
-        .subscribe(() => done(), (error) => done(error));
+        }),
+      ).subscribe(() => done(), (error) => done(error));
     });
 
     context('when there are other roles on the list', function () {
@@ -241,17 +239,17 @@ describe('AutoRoleService', function () {
       });
 
       it('appends the role to the list', function (done) {
-        this.autoRoleService.removeJoinRole(this.guild, this.role)
-          .flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles))
-          .toArray()
-          .do((emitted) => {
+        this.autoRoleService.removeJoinRole(this.guild, this.role).pipe(
+          flatMap(() => this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles)),
+          toArray(),
+          tap((emitted) => {
             expect(emitted).to.deep.equal([
               [
                 this.preExistingRole.id,
               ],
             ]);
-          })
-          .subscribe(() => done(), (error) => done(error));
+          }),
+        ).subscribe(() => done(), (error) => done(error));
       });
     });
 
@@ -262,13 +260,13 @@ describe('AutoRoleService', function () {
       });
 
       it('throws an RoleNotAddedError', function (done) {
-        this.autoRoleService.removeJoinRole(this.guild, this.role)
-          .do(() => { throw new Error('Expected an error to be thrown.'); })
-          .catch((error) => {
+        this.autoRoleService.removeJoinRole(this.guild, this.role).pipe(
+          toArray(),
+          catchError((error) => {
             expect(error).to.be.an.instanceof(RoleNotAddedError);
-            return Rx.Observable.return(true);
-          })
-          .subscribe(() => done(), (error) => done(error));
+            return EMPTY;
+          }),
+        ).subscribe(() => done(new Error('Expected an error to be thrown.')), (error) => done(error), () => done());
       });
     });
   });
