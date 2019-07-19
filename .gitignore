@@ -5,3 +5,5 @@ config\.js
 data/
 
 \.nyc_output/
+
+*.tgz

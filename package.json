@@ -1,11 +1,11 @@
 {
   "name": "chaos-plugin-auto-role",
-  "version": "4.0.0-dev",
+  "version": "4.0.1-dev",
   "description": "Auto Role assignment plugin for ChaosCore Discord Bots",
   "main": "index.js",
-  "directories": {
-    "lib": "src/lib"
-  },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "bot": "node --preserve-symlinks test/bot.js",
     "test": "mocha",
