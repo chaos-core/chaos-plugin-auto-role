@@ -6,7 +6,7 @@ const DataKeys = require('../lib/data-keys');
 const {
   RoleAlreadyAddedError,
   RoleNotAddedError,
-} = require('../../errors');
+} = require('../lib/errors');
 
 class AutoRoleService extends Service {
   constructor(chaos) {
@@ -28,11 +28,7 @@ class AutoRoleService extends Service {
   getJoinRoleIds(guild) {
     return of('').pipe(
       flatMap(() => this.chaos.getGuildData(guild.id, DataKeys.JoinRoles)),
-      flatMap((roleIds) => iif(
-        () => typeof roleIds === "undefined",
-        of([]),
-        of(roleIds),
-      )),
+      map((roleIds) => roleIds || []),
     );
   }
 

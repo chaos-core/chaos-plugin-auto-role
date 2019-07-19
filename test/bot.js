@@ -1,13 +1,9 @@
 const ChaosCore = require('chaos-core');
-const Path = require('path');
 
 const localConfig = require('../config');
 
 let bot = new ChaosCore({
-  dataSource: {
-    type: "disk",
-    dataDir: Path.join(__dirname, '../data'),
-  },
+  dataSource: {type: "memory"},
   ...localConfig,
 });
 

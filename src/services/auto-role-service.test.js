@@ -8,7 +8,7 @@ const DataKeys = require('../lib/data-keys');
 const {
   RoleAlreadyAddedError,
   RoleNotAddedError,
-} = require('../../errors');
+} = require('../lib/errors');
 
 describe('AutoRoleService', function () {
   beforeEach(function () {
