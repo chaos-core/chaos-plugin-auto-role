@@ -6,13 +6,10 @@ module.exports = {
   name: 'list',
   description: "list all configured roles",
 
-  onListen() {
-    this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
-  },
-
   run(context) {
+    const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     return of('').pipe(
-      flatMap(() => this.autoRoleService.getJoinRoles(context.guild).pipe(
+      flatMap(() => autoRoleService.getJoinRoles(context.guild).pipe(
         map((roles) => roles.map((r) => r.name)),
       )),
       map((joinRoles) => {

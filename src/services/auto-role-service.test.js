@@ -2,8 +2,8 @@ const {EMPTY} = require('rxjs');
 const {tap, toArray, flatMap, catchError} = require('rxjs/operators');
 const ChaosCore = require('chaos-core');
 
-const AutoRoleService = require('../../services/auto-role-service');
-const DataKeys = require('../../lib/data-keys');
+const AutoRoleService = require('./auto-role-service');
+const DataKeys = require('../lib/data-keys');
 
 const {
   RoleAlreadyAddedError,

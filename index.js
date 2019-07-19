@@ -1,4 +1,4 @@
-const DataKeys = require('./lib/data-keys');
+const DataKeys = require('./src/lib/data-keys');
 
 module.exports = {
   name: "autoRoles",
@@ -8,11 +8,11 @@ module.exports = {
     {keyword: DataKeys.JoinRoles, data: []},
   ],
   services: [
-    require('./services/auto-role-service'),
+    require('./plugin/services/auto-role-service'),
   ],
   configActions: [
-    require('./settings/add-join-role'),
-    require('./settings/rm-join-role'),
-    require('./settings/list'),
+    require('./plugin/settings/add-join-role'),
+    require('./plugin/settings/rm-join-role'),
+    require('./plugin/settings/list'),
   ],
 };

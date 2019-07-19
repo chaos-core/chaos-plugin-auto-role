@@ -4,33 +4,30 @@ const {flatMap, map, catchError} = require('rxjs/operators');
 const findRole = require('../lib/role-utilities').findRole;
 const {
   AutoRoleError,
-  RoleAlreadyAddedError,
-} = require('../errors');
+  RoleNotAddedError,
+} = require('../../errors');
 
 module.exports = {
-  name: 'addJoinRole',
-  description: "Add a role to the list to automatically grant to new users.",
+  name: 'rmJoinRole',
+  description: "Remove a role from the list to automatically grant to new users.",
 
   inputs: [
     {
       name: 'role',
-      description: 'A name, mention, or ID of a role to grant when a user joins',
+      description: 'A name, mention, or ID of the role to remove',
       required: true,
     },
   ],
 
-  onListen() {
-    this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
-  },
-
   run(context) {
+    const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     let guild = context.guild;
     let roleString = context.inputs.role;
 
     if (!roleString) {
       return of({
         status: 400,
-        content: `The name of a role to assign is required`,
+        content: `The name of a role to remove is required`,
       });
     }
 
@@ -43,10 +40,10 @@ module.exports = {
     }
 
     return of('').pipe(
-      flatMap(() => this.autoRoleService.addJoinRole(guild, role)),
+      flatMap(() => autoRoleService.removeJoinRole(guild, role)),
       map(() => ({
         status: 200,
-        content: `the role ${role.name} will be granted to users when they join`,
+        content: `the role ${role.name} has been removed from the list.`,
       })),
       catchError((error) => {
         if (error instanceof AutoRoleError) {
@@ -59,10 +56,10 @@ module.exports = {
   },
 
   handleAutoRoleError(error) {
-    if (error instanceof RoleAlreadyAddedError) {
+    if (error instanceof RoleNotAddedError) {
       return of({
         status: 400,
-        message: 'That role is already being granted to new users.',
+        message: 'That role is not on the list.',
       });
     } else {
       return throwError(error);

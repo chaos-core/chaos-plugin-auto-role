@@ -6,18 +6,13 @@ const DataKeys = require('../lib/data-keys');
 const {
   RoleAlreadyAddedError,
   RoleNotAddedError,
-} = require('../errors');
+} = require('../../errors');
 
 class AutoRoleService extends Service {
-  onListen() {
-    this.chaos.streams.guildMemberAdd$.pipe(
-      flatMap((newMember) => this.handleMemberJoin(newMember)),
-    ).subscribe(
-      () => {},
-      (error) => this.chaos.handleError(error, [
-        {name: "Event", value: "guildMemberAdd$"},
-      ]),
-    );
+  constructor(chaos) {
+    super(chaos);
+
+    this.chaos.on("guildMemberAdd", () => (newMember) => this.handleMemberJoin(newMember));
   }
 
   handleMemberJoin(newMember) {

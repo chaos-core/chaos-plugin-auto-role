@@ -4,7 +4,7 @@
   "description": "Auto Role assignment plugin for ChaosCore Discord Bots",
   "main": "index.js",
   "directories": {
-    "lib": "lib"
+    "lib": "src/lib"
   },
   "scripts": {
     "bot": "node --preserve-symlinks test/bot.js",
@@ -28,9 +28,9 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-subset": "^1.6.0",
-    "chaos-core": "github:chaos-core/chaos-core#RxJS-6",
-    "chaos-data-disk": "github:chaos-core/chaos-data-disk#RxJs-6",
-    "chaos-data-memory": "github:chaos-core/chaos-data-memory#RxJs-6",
+    "chaos-core": "^4.0.0-dev",
+    "chaos-data-disk": "^4.0.0-dev",
+    "chaos-data-memory": "^4.0.0-dev",
     "discord.js": "^11.4.2",
     "eslint": "^5.16.0",
     "eslint-plugin-chai-expect": "^2.0.1",

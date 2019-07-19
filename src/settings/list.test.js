@@ -4,26 +4,18 @@ const Collection = require('discord.js').Collection;
 const ConfigAction = require('chaos-core').ConfigAction;
 const ChaosCore = require("chaos-core");
 
-const AutoRoleService = require('../../services/auto-role-service');
-const listRoles = require('../../settings/list');
+const AutoRoleService = require('../services/auto-role-service');
+const listRoles = require('./list');
 
 describe('!settings autoRoles list', function () {
-  beforeEach(function () {
+  beforeEach(function (done) {
     this.chaos = ChaosCore.test.createChaosStub();
     this.autoRoleService = new AutoRoleService(this.chaos);
 
     this.chaos.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
 
-    this.listRoles = new ConfigAction(listRoles);
-    this.listRoles.chaos = this.chaos;
-
-    this.listRoles.onListen();
-  });
-
-  context('#onListen', function () {
-    it('loads the AutoRoleService', function () {
-      expect(this.listRoles.autoRoleService).to.eq(this.autoRoleService);
-    });
+    this.listRoles = new ConfigAction(this.chaos, listRoles);
+    this.chaos.emit('chaos.listen').subscribe(() => done(), (error) => done(error));
   });
 
   describe('#run', function () {
