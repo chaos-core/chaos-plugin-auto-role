@@ -3,12 +3,12 @@ module.exports = {
   description: "Grants a role to users when they join",
 
   services: [
-    require('./plugin/services/auto-role-service'),
+    require('./src/services/auto-role-service'),
   ],
 
   configActions: [
-    require('./plugin/settings/add-join-role'),
-    require('./plugin/settings/rm-join-role'),
-    require('./plugin/settings/list'),
+    require('./src/settings/add-join-role'),
+    require('./src/settings/rm-join-role'),
+    require('./src/settings/list'),
   ],
 };
