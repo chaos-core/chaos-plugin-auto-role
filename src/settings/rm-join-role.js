@@ -11,7 +11,7 @@ module.exports = {
   name: 'rmJoinRole',
   description: "Remove a role from the list to automatically grant to new users.",
 
-  inputs: [
+  args: [
     {
       name: 'role',
       description: 'A name, mention, or ID of the role to remove',
@@ -22,14 +22,7 @@ module.exports = {
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     let guild = context.guild;
-    let roleString = context.inputs.role;
-
-    if (!roleString) {
-      return of({
-        status: 400,
-        content: `The name of a role to remove is required`,
-      });
-    }
+    let roleString = context.args.role;
 
     let role = findRole(guild, roleString);
     if (!role) {

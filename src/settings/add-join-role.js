@@ -11,7 +11,7 @@ module.exports = {
   name: 'addJoinRole',
   description: "Add a role to the list to automatically grant to new users.",
 
-  inputs: [
+  args: [
     {
       name: 'role',
       description: 'A name, mention, or ID of a role to grant when a user joins',
@@ -22,14 +22,7 @@ module.exports = {
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     const guild = context.guild;
-
-    const roleString = context.inputs.role;
-    if (!roleString) {
-      return of({
-        status: 400,
-        content: `The name of a role to assign is required`,
-      });
-    }
+    const roleString = context.args.role;
 
     const role = findRole(guild, roleString);
     if (!role) {
