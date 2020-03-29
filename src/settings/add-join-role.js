@@ -1,5 +1,6 @@
 const {of, throwError} = require('rxjs');
 const {flatMap, map, catchError} = require('rxjs/operators');
+const ChaosCore = require('chaos-core');
 
 const findRole = require('../lib/role-utilities').findRole;
 const {
@@ -7,17 +8,21 @@ const {
   RoleAlreadyAddedError,
 } = require('../lib/errors');
 
-module.exports = {
-  name: 'addJoinRole',
-  description: "Add a role to the list to automatically grant to new users.",
+class AddJoinRoleAction extends ChaosCore.ConfigAction {
+  constructor(chaos) {
+    super(chaos, {
+      name: 'addJoinRole',
+      description: "Add a role to the list to automatically grant to new users.",
 
-  args: [
-    {
-      name: 'role',
-      description: 'A name, mention, or ID of a role to grant when a user joins',
-      required: true,
-    },
-  ],
+      args: [
+        {
+          name: 'role',
+          description: 'A name, mention, or ID of a role to grant when a user joins',
+          required: true,
+        },
+      ],
+    });
+  }
 
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
@@ -46,7 +51,7 @@ module.exports = {
         }
       }),
     );
-  },
+  }
 
   handleAutoRoleError(error) {
     if (error instanceof RoleAlreadyAddedError) {
@@ -57,5 +62,7 @@ module.exports = {
     } else {
       return throwError(error);
     }
-  },
-};
+  }
+}
+
+module.exports = AddJoinRoleAction;

@@ -1,10 +1,15 @@
 const {of} = require('rxjs');
 const {map, flatMap} = require('rxjs/operators');
 const RichEmbed = require('discord.js').RichEmbed;
+const ChaosCore = require('chaos-core');
 
-module.exports = {
-  name: 'list',
-  description: "list all configured roles",
+class ListAction extends ChaosCore.ConfigAction {
+  constructor(chaos) {
+    super(chaos, {
+      name: 'list',
+      description: "list all configured roles",
+    });
+  }
 
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
@@ -23,5 +28,7 @@ module.exports = {
         };
       }),
     );
-  },
-};
+  }
+}
+
+module.exports = ListAction;

@@ -1,5 +1,6 @@
 const {of, throwError} = require('rxjs');
 const {flatMap, map, catchError} = require('rxjs/operators');
+const ChaosCore = require('chaos-core');
 
 const findRole = require('../lib/role-utilities').findRole;
 const {
@@ -7,17 +8,22 @@ const {
   RoleNotAddedError,
 } = require('../lib/errors');
 
-module.exports = {
-  name: 'rmJoinRole',
-  description: "Remove a role from the list to automatically grant to new users.",
 
-  args: [
-    {
-      name: 'role',
-      description: 'A name, mention, or ID of the role to remove',
-      required: true,
-    },
-  ],
+class RmJoinRoleAction extends ChaosCore.ConfigAction {
+  constructor(chaos) {
+    super(chaos, {
+      name: 'rmJoinRole',
+      description: "Remove a role from the list to automatically grant to new users.",
+
+      args: [
+        {
+          name: 'role',
+          description: 'A name, mention, or ID of the role to remove',
+          required: true,
+        },
+      ],
+    });
+  }
 
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
@@ -46,7 +52,7 @@ module.exports = {
         }
       }),
     );
-  },
+  }
 
   handleAutoRoleError(error) {
     if (error instanceof RoleNotAddedError) {
@@ -57,5 +63,7 @@ module.exports = {
     } else {
       return throwError(error);
     }
-  },
-};
+  }
+}
+
+module.exports = RmJoinRoleAction;
