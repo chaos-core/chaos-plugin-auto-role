@@ -9,9 +9,8 @@ const rmJoinRole = require('./rm-join-role');
 describe('!settings autoRole rmJoinRole {role}', function () {
   beforeEach(function (done) {
     this.chaos = ChaosCore.test.createChaosStub();
-    this.autoRoleService = new AutoRoleService(this.chaos);
-
-    this.chaos.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
+    this.chaos.addService('autoRoles', AutoRoleService);
+    this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
 
     this.rmJoinRole = new ConfigAction(this.chaos, rmJoinRole);
     this.chaos.emit('chaos.listen').subscribe(() => done(), (error) => done(error));

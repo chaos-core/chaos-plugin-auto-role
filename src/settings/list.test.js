@@ -10,9 +10,8 @@ const listRoles = require('./list');
 describe('!settings autoRoles list', function () {
   beforeEach(function (done) {
     this.chaos = ChaosCore.test.createChaosStub();
-    this.autoRoleService = new AutoRoleService(this.chaos);
-
-    this.chaos.stubService('autoRoles', 'AutoRoleService', this.autoRoleService);
+    this.chaos.addService('autoRoles', AutoRoleService);
+    this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
 
     this.listRoles = new ConfigAction(this.chaos, listRoles);
     this.chaos.emit('chaos.listen').subscribe(() => done(), (error) => done(error));
