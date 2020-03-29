@@ -15,6 +15,8 @@ class AutoRolesPlugin extends ChaosCore.Plugin {
         require('./settings/rm-join-role'),
         require('./settings/list'),
       ],
+
+      strings: require('./strings'),
     });
   }
 }

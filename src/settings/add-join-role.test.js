@@ -103,7 +103,7 @@ describe('!config autoRole addJoinRole {role}', function () {
               expect(emitted).to.deep.equal([
                 {
                   status: 200,
-                  content: 'the role Role1 will be granted to users when they join',
+                  content: "The role 'Role1' will be granted to users when they join.",
                 },
               ]);
             }),

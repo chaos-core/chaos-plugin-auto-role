@@ -11,6 +11,10 @@ class ListAction extends ChaosCore.ConfigAction {
     });
   }
 
+  get strings() {
+    return super.strings.userRoles.configActions.list;
+  }
+
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     return of('').pipe(
@@ -23,7 +27,7 @@ class ListAction extends ChaosCore.ConfigAction {
 
         return {
           status: 200,
-          content: "Here are all the configured roles:",
+          content: this.strings.configuredRoles(),
           embed: embed,
         };
       }),

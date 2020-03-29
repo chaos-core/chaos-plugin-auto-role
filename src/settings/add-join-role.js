@@ -24,6 +24,10 @@ class AddJoinRoleAction extends ChaosCore.ConfigAction {
     });
   }
 
+  get strings() {
+    return super.strings.userRoles.configActions.addJoinRole;
+  }
+
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     const guild = context.guild;
@@ -33,7 +37,7 @@ class AddJoinRoleAction extends ChaosCore.ConfigAction {
     if (!role) {
       return of({
         status: 404,
-        content: `The role '${roleString}' could not be found.`,
+        content: this.strings.roleNotFound({roleString}),
       });
     }
 
@@ -41,7 +45,7 @@ class AddJoinRoleAction extends ChaosCore.ConfigAction {
       flatMap(() => autoRoleService.addJoinRole(guild, role)),
       map(() => ({
         status: 200,
-        content: `the role ${role.name} will be granted to users when they join`,
+        content: this.strings.roleAdded({roleName: role.name}),
       })),
       catchError((error) => {
         if (error instanceof AutoRoleError) {
@@ -57,7 +61,7 @@ class AddJoinRoleAction extends ChaosCore.ConfigAction {
     if (error instanceof RoleAlreadyAddedError) {
       return of({
         status: 400,
-        message: 'That role is already being granted to new users.',
+        message: this.strings.alreadyAdded(),
       });
     } else {
       return throwError(error);

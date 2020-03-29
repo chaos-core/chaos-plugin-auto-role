@@ -25,6 +25,10 @@ class RmJoinRoleAction extends ChaosCore.ConfigAction {
     });
   }
 
+  get strings() {
+    return super.strings.userRoles.configActions.rmJoinRole;
+  }
+
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     let guild = context.guild;
@@ -34,7 +38,7 @@ class RmJoinRoleAction extends ChaosCore.ConfigAction {
     if (!role) {
       return of({
         status: 404,
-        content: `The role '${roleString}' could not be found.`,
+        content: this.strings.roleNotFound({roleString}),
       });
     }
 
@@ -42,7 +46,7 @@ class RmJoinRoleAction extends ChaosCore.ConfigAction {
       flatMap(() => autoRoleService.removeJoinRole(guild, role)),
       map(() => ({
         status: 200,
-        content: `the role ${role.name} has been removed from the list.`,
+        content: this.strings.roleRemoved({roleName: role.name}),
       })),
       catchError((error) => {
         if (error instanceof AutoRoleError) {
@@ -58,7 +62,7 @@ class RmJoinRoleAction extends ChaosCore.ConfigAction {
     if (error instanceof RoleNotAddedError) {
       return of({
         status: 400,
-        message: 'That role is not on the list.',
+        message: this.strings.notAdded(),
       });
     } else {
       return throwError(error);

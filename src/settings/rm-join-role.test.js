@@ -62,7 +62,7 @@ describe('!config autoRole rmJoinRole {role}', function () {
         tap((response) => {
           expect(response).to.deep.equal({
             status: 400,
-            message: 'That role is not on the list.',
+            message: "That role is not being granted to new users.",
           });
         }),
       ).subscribe(() => done(), (error) => done(error));
@@ -100,7 +100,7 @@ describe('!config autoRole rmJoinRole {role}', function () {
             tap((response) => {
               expect(response).to.deep.equal({
                 status: 200,
-                content: 'the role Role1 has been removed from the list.',
+                content: "The role 'Role1' will no longer be granted to users when they join.",
               });
             }),
           ).subscribe(() => done(), (error) => done(error));
