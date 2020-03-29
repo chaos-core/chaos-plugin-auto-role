@@ -1,7 +1,5 @@
 const ChaosCore = require('chaos-core');
 
-module.exports = AutoRolesPlugin;
-
 class AutoRolesPlugin extends ChaosCore.Plugin {
   constructor(chaos) {
     super(chaos, {
@@ -21,3 +19,4 @@ class AutoRolesPlugin extends ChaosCore.Plugin {
   }
 }
 
+module.exports = AutoRolesPlugin;

@@ -1,2 +1,3 @@
 --require ./test/test-helper.js
 src/**/*.test.js
+index.test.js
