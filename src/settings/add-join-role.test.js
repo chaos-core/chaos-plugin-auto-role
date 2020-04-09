@@ -1,4 +1,3 @@
-const {tap, toArray} = require('rxjs/operators');
 const Collection = require('discord.js').Collection;
 const ChaosCore = require("chaos-core");
 
@@ -34,38 +33,27 @@ describe('!config autoRole addJoinRole {role}', function () {
       this.args.role = undefined;
     });
 
-    it('emits an error message', function (done) {
-      this.runTest$().pipe(
-        tap((response) => {
-          expect(response).to.containSubset({
-            "content": "I'm sorry, but I'm missing some information for that command:",
-            "status": 400,
-          });
-        }),
-      ).subscribe(() => done(), (error) => done(error));
+    it('emits an error message', async function () {
+      const response = await this.runTest$().toPromise();
+      expect(response).to.containSubset({
+        "content": "I'm sorry, but I'm missing some information for that command:",
+        "status": 400,
+      });
     });
   });
 
   context('when the role is already on the list', function () {
-    beforeEach(function (done) {
+    beforeEach(async function () {
       this.guild.roles.set(this.role.id, this.role);
-
-      this.autoRoleService.addJoinRole(this.guild, this.role)
-        .subscribe(() => {}, (error) => done(error), () => done());
+      await this.autoRoleService.addJoinRole(this.guild, this.role).toPromise();
     });
 
-    it('emits an error message', function (done) {
-      this.runTest$().pipe(
-        toArray(),
-        tap((emitted) => {
-          expect(emitted).to.deep.equal([
-            {
-              status: 400,
-              message: 'That role is already being granted to new users.',
-            },
-          ]);
-        }),
-      ).subscribe(() => done(), (error) => done(error));
+    it('emits an error message', async function () {
+      const response = await this.runTest$().toPromise();
+      expect(response).to.deep.equal({
+        status: 400,
+        message: 'That role is already being granted to new users.',
+      });
     });
   });
 
@@ -84,46 +72,29 @@ describe('!config autoRole addJoinRole {role}', function () {
           this.guild.roles.set(this.role.id, this.role);
         });
 
-        it('adds the correct role to the list', function (done) {
+        it('adds the correct role to the list', async function () {
           sinon.spy(this.autoRoleService, 'addJoinRole');
-
-          this.runTest$().pipe(
-            toArray(),
-            tap(() => {
-              expect(this.autoRoleService.addJoinRole)
-                .to.have.been.calledWith(this.guild, this.role);
-            }),
-          ).subscribe(() => done(), (error) => done(error));
+          await this.runTest$().toPromise();
+          expect(this.autoRoleService.addJoinRole)
+            .to.have.been.calledWith(this.guild, this.role);
         });
 
-        it('emits a success message', function (done) {
-          this.runTest$().pipe(
-            toArray(),
-            tap((emitted) => {
-              expect(emitted).to.deep.equal([
-                {
-                  status: 200,
-                  content: "The role 'Role1' will be granted to users when they join.",
-                },
-              ]);
-            }),
-          ).subscribe(() => done(), (error) => done(error));
+        it('emits a success message', async function () {
+          const response = await this.runTest$().toPromise();
+          expect(response).to.deep.equal({
+            status: 200,
+            content: "The role 'Role1' will be granted to users when they join.",
+          });
         });
       });
 
       context('when the role does not exist in the guild', function () {
-        it('emits an error message', function (done) {
-          this.runTest$().pipe(
-            toArray(),
-            tap((emitted) => {
-              expect(emitted).to.deep.equal([
-                {
-                  status: 404,
-                  content: `The role '${input.value}' could not be found.`,
-                },
-              ]);
-            }),
-          ).subscribe(() => done(), (error) => done(error));
+        it('emits an error message', async function () {
+          const response = await this.runTest$().toPromise();
+          expect(response).to.deep.equal({
+            status: 404,
+            content: `The role '${input.value}' could not be found.`,
+          });
         });
       });
     });

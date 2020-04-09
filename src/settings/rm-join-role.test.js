@@ -1,11 +1,10 @@
-const {tap} = require('rxjs/operators');
 const Collection = require('discord.js').Collection;
 const ChaosCore = require("chaos-core");
 
 const AutoRolesPlugin = require('../plugin');
 
 describe('!config autoRole rmJoinRole {role}', function () {
-  beforeEach(function (done) {
+  beforeEach(async function () {
     this.chaos = ChaosCore.test.createChaosStub();
     this.chaos.addPlugin(AutoRolesPlugin);
     this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
@@ -27,9 +26,7 @@ describe('!config autoRole rmJoinRole {role}', function () {
       args: this.args,
     });
 
-    this.autoRoleService
-      .addJoinRole(this.guild, this.role)
-      .subscribe(() => done(), (error) => done(error));
+    await this.autoRoleService.addJoinRole(this.guild, this.role).toPromise();
   });
 
   context('when a role is not given', function () {
@@ -37,35 +34,27 @@ describe('!config autoRole rmJoinRole {role}', function () {
       this.args.role = undefined;
     });
 
-    it('emits an error message', function (done) {
-      this.runTest$().pipe(
-        tap((response) => {
-          expect(response).to.containSubset({
-            "content": "I'm sorry, but I'm missing some information for that command:",
-            "status": 400,
-          });
-        }),
-      ).subscribe(() => done(), (error) => done(error));
+    it('emits an error message', async function () {
+      const response = await this.runTest$().toPromise();
+      expect(response).to.containSubset({
+        "content": "I'm sorry, but I'm missing some information for that command:",
+        "status": 400,
+      });
     });
   });
 
   context('when the role is not on the list', function () {
-    beforeEach(function (done) {
+    beforeEach(async function () {
       this.guild.roles.set(this.role.id, this.role);
-
-      this.autoRoleService.removeJoinRole(this.guild, this.role)
-        .subscribe(() => {}, (error) => done(error), () => done());
+      await this.autoRoleService.removeJoinRole(this.guild, this.role).toPromise();
     });
 
-    it('emits an error message', function (done) {
-      this.runTest$().pipe(
-        tap((response) => {
-          expect(response).to.deep.equal({
-            status: 400,
-            message: "That role is not being granted to new users.",
-          });
-        }),
-      ).subscribe(() => done(), (error) => done(error));
+    it('emits an error message', async function () {
+      const response = await this.runTest$().toPromise();
+      expect(response).to.deep.equal({
+        status: 400,
+        message: "That role is not being granted to new users.",
+      });
     });
   });
 
@@ -84,41 +73,32 @@ describe('!config autoRole rmJoinRole {role}', function () {
           this.guild.roles.set(this.role.id, this.role);
         });
 
-        it('adds the correct role to the list', function (done) {
+        it('adds the correct role to the list', async function () {
           sinon.spy(this.autoRoleService, 'removeJoinRole');
-
-          this.runTest$().pipe(
-            tap(() => {
-              expect(this.autoRoleService.removeJoinRole)
-                .to.have.been.calledWith(this.guild, this.role);
-            }),
-          ).subscribe(() => done(), (error) => done(error));
+          await this.runTest$().toPromise();
+          expect(this.autoRoleService.removeJoinRole)
+            .to.have.been.calledWith(this.guild, this.role);
         });
 
-        it('emits a success message', function (done) {
-          this.runTest$().pipe(
-            tap((response) => {
-              expect(response).to.deep.equal({
-                status: 200,
-                content: "The role 'Role1' will no longer be granted to users when they join.",
-              });
-            }),
-          ).subscribe(() => done(), (error) => done(error));
+        it('emits a success message', async function () {
+          const response = await this.runTest$().toPromise();
+          expect(response).to.deep.equal({
+            status: 200,
+            content: "The role 'Role1' will no longer be granted to users when they join.",
+          });
         });
       });
 
       context('when the role does not exist in the guild', function () {
-        it('emits an error message', function (done) {
-          this.runTest$().pipe(
-            tap((response) => {
-              expect(response).to.deep.equal({
-                status: 404,
-                content: `The role '${input.value}' could not be found.`,
-              });
-            }),
-          ).subscribe(() => done(), (error) => done(error));
+        it('emits an error message', async function () {
+          const response = await this.runTest$().toPromise();
+          expect(response).to.deep.equal({
+            status: 404,
+            content: `The role '${input.value}' could not be found.`,
+          });
         });
       });
     });
   });
-});
+})
+;

@@ -1,5 +1,3 @@
-const {from} = require('rxjs');
-const {tap, toArray, flatMap, concatMap, find, count} = require('rxjs/operators');
 const Collection = require('discord.js').Collection;
 const ChaosCore = require("chaos-core");
 
@@ -26,60 +24,48 @@ describe('!config autoRoles list', function () {
     });
   });
 
-  it('emits a single response', function (done) {
-    this.runTest$().pipe(
-      count(() => true),
-      tap((count) => expect(count).to.equal(1)),
-    ).subscribe(() => done(), (error) => done(error));
-  });
-
-  it('emits an embed', function (done) {
-    this.runTest$().pipe(
-      tap((response) => expect(response).to.have.property('embed')),
-    ).subscribe(() => done(), (error) => done(error));
+  it('emits an embed', async function () {
+    const response = await this.runTest$().toPromise();
+    expect(response).to.have.property('embed');
   });
 
   describe('roles list', function () {
-    it('has section for the join roles', function (done) {
-      this.runTest$().pipe(
-        flatMap((response) => response.embed.fields),
-        find((field) => field.name === 'Join Roles'),
-        tap((field) => expect(field).to.not.be.undefined),
-      ).subscribe(() => done(), (error) => done(error));
+    it('has section for the join roles', async function () {
+      const response = await this.runTest$().toPromise();
+      const field = response.embed.fields
+        .find((field) => field.name === 'Join Roles');
+      expect(field).to.not.be.undefined;
     });
 
     describe('join roles', function () {
       context('when there are no roles on the list', function () {
-        it('adds a "Join Roles" field, with an empty list', function (done) {
-          this.runTest$().pipe(
-            flatMap((response) => response.embed.fields),
-            find((field) => field.name === 'Join Roles'),
-            tap((field) => expect(field.value).to.eq('[None]')),
-          ).subscribe(() => done(), (error) => done(error));
+        it('adds a "Join Roles" field, with an empty list', async function () {
+          const response = await this.runTest$().toPromise();
+          let field = response.embed.fields
+            .find((field) => field.name === 'Join Roles');
+          expect(field.value).to.eq('[None]');
         });
       });
 
       context('when there are roles on the list', function () {
-        beforeEach(function (done) {
+        beforeEach(async function () {
           this.roles = [
             {id: '0000-role-1', name: 'Role1'},
             {id: '0000-role-2', name: 'Role2'},
             {id: '0000-role-3', name: 'Role3'},
           ];
 
-          from(this.roles).pipe(
-            tap((role) => this.guild.roles.set(role.id, role)),
-            concatMap((role) => this.autoRoleService.addJoinRole(this.guild, role)),
-            toArray(),
-          ).subscribe(() => done(), (error) => done(error));
+          for (const role of this.roles) {
+            this.guild.roles.set(role.id, role);
+            await this.autoRoleService.addJoinRole(this.guild, role).toPromise();
+          }
         });
 
-        it('adds a "Join Roles" field, with a list of all assigned roles', function (done) {
-          this.runTest$().pipe(
-            flatMap((response) => response.embed.fields),
-            find((field) => field.name === 'Join Roles'),
-            tap((field) => expect(field.value).to.eq('Role1, Role2, Role3')),
-          ).subscribe(() => done(), (error) => done(error));
+        it('adds a "Join Roles" field, with a list of all assigned roles', async function () {
+          const response = await this.runTest$().toPromise();
+          const field = response.embed.fields
+            .find((field) => field.name === 'Join Roles');
+          expect(field.value).to.eq('Role1, Role2, Role3');
         });
       });
     });
