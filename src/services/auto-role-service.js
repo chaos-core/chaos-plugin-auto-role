@@ -1,5 +1,3 @@
-const {of, from, iif, throwError} = require('rxjs');
-const {toArray, flatMap, concatMap, map, filter} = require('rxjs/operators');
 const Service = require('chaos-core').Service;
 
 const DataKeys = require('../lib/data-keys');
@@ -12,70 +10,47 @@ class AutoRoleService extends Service {
   constructor(chaos) {
     super(chaos);
 
-    this.chaos.on("guildMemberAdd", () => (newMember) => this.handleMemberJoin(newMember));
+    this.chaos.on("guildMemberAdd", async (newMember) => this.handleMemberJoin(newMember));
   }
 
-  handleMemberJoin(newMember) {
-    return of('').pipe(
-      flatMap(() => this.getJoinRoles(newMember.guild)),
-      flatMap((roles) => from(roles).pipe(
-        concatMap((role) => newMember.addRole(role)),
-        toArray(),
-      )),
-    );
+  async handleMemberJoin(newMember) {
+    const roles = this.getJoinRoles(newMember.guild);
+    for (const role of roles) {
+      await newMember.addRole(role);
+    }
   }
 
-  getJoinRoleIds(guild) {
-    return of('').pipe(
-      flatMap(() => this.chaos.getGuildData(guild.id, DataKeys.JoinRoles)),
-      map((roleIds) => roleIds || []),
-    );
+  async getJoinRoleIds(guild) {
+    const roleIds = await this.getGuildData(guild.id, DataKeys.JoinRoles);
+    return roleIds || [];
   }
 
-  setJoinRoleIds(guild, roleIds) {
-    return of('').pipe(
-      flatMap(() => this.chaos.setGuildData(guild.id, DataKeys.JoinRoles, roleIds)),
-    );
+  async setJoinRoleIds(guild, roleIds) {
+    return this.setGuildData(guild.id, DataKeys.JoinRoles, roleIds);
   }
 
-  getJoinRoles(guild) {
-    return of('').pipe(
-      flatMap(() => this.getJoinRoleIds(guild)),
-      flatMap((roleIds) => from(roleIds)),
-      map((roleId) => guild.roles.get(roleId)),
-      filter((role) => role),
-      toArray(),
-    );
+  async getJoinRoles(guild) {
+    const roleIds = await this.getJoinRoleIds(guild);
+    const roles = roleIds.map((roleId) => guild.roles.get(roleId));
+    return roles.filter((role) => role);
   }
 
-  addJoinRole(guild, role) {
-    return of('').pipe(
-      flatMap(() => this.getJoinRoleIds(guild)),
-      flatMap((roleIds) => iif(
-        () => roleIds.indexOf(role.id) === -1,
-        of(roleIds),
-        throwError(new RoleAlreadyAddedError()),
-      )),
-      map((roleIds) => ([...roleIds, role.id])),
-      flatMap((roleIds) => this.setJoinRoleIds(guild, roleIds)),
-    );
+  async addJoinRole(guild, role) {
+    const roleIds = await this.getJoinRoleIds(guild);
+    if (roleIds.indexOf(role.id) !== -1) {
+      throw new RoleAlreadyAddedError();
+    }
+    roleIds.push(role.id);
+    return this.setJoinRoleIds(guild, roleIds);
   }
 
-  removeJoinRole(guild, role) {
-    return of('').pipe(
-      flatMap(() => this.getJoinRoleIds(guild)),
-      flatMap((roleIds) => iif(
-        () => roleIds.indexOf(role.id) > -1,
-        of(roleIds),
-        throwError(new RoleNotAddedError()),
-      )),
-      map((roleIds) => {
-        roleIds = [...roleIds];
-        roleIds.splice(roleIds.indexOf(role.id), 1);
-        return roleIds;
-      }),
-      flatMap((roleIds) => this.setJoinRoleIds(guild, roleIds)),
-    );
+  async removeJoinRole(guild, role) {
+    const roleIds = await this.getJoinRoleIds(guild);
+    if (roleIds.indexOf(role.id) === -1) {
+      throw new RoleNotAddedError();
+    }
+    roleIds.splice(roleIds.indexOf(role.id), 1);
+    return this.setJoinRoleIds(guild, roleIds);
   }
 }
 
