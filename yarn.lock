@@ -240,7 +240,7 @@ chalk@^3.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chaos-core@^4.2.1:
+chaos-core@^4.3.0:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/chaos-core/-/chaos-core-4.3.1.tgz#7afb5f15d97d275a4bc1f66dc5f2ca8306c8a070"
   integrity sha512-wQKTqrTQXG0HCZIRXRq7pZUB0Vlb10g6pEIlG0ICDGRS30lRz+s/AcpYLCPICfi8mEhrlIKNIjYIOuIgBK5vNA==
@@ -1494,7 +1494,7 @@ run-async@^2.4.0:
   dependencies:
     is-promise "^2.1.0"
 
-rxjs@^6.5.2, rxjs@^6.5.3:
+rxjs@^6.5.3:
   version "6.5.5"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.5.tgz#c5c884e3094c8cfee31bf27eb87e54ccfc87f9ec"
   integrity sha512-WfQI+1gohdf0Dai/Bbmk5L5ItH5tYqm3ki2c5GdWhKjalzjg93N3avFjVStyZZz+A2Em+ZxKH5bNghw9UeylGQ==
