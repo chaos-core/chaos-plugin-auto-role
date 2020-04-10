@@ -61,7 +61,7 @@ class AddJoinRoleAction extends ChaosCore.ConfigAction {
     if (error instanceof RoleAlreadyAddedError) {
       return of({
         status: 400,
-        message: this.strings.alreadyAdded(),
+        content: this.strings.alreadyAdded(),
       });
     } else {
       return throwError(error);

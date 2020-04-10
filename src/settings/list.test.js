@@ -1,71 +1,71 @@
-const Collection = require('discord.js').Collection;
 const ChaosCore = require("chaos-core");
+const {MockMessage} = require("chaos-core").test.discordMocks;
 
 const AutoRolesPlugin = require('../plugin');
 
-describe('!config autoRoles list', function () {
-  beforeEach(function () {
+describe('Config: list', function () {
+  beforeEach(async function () {
     this.chaos = ChaosCore.test.createChaosStub();
     this.chaos.addPlugin(AutoRolesPlugin);
     this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
 
-    this.guild = {
-      id: '22222',
-      name: 'Test Guild',
-      roles: new Collection(),
-    };
+    this.message = new MockMessage();
 
-    this.message = {guild: this.guild};
-
-    this.runTest$ = () => this.chaos.testConfigAction({
-      pluginName: 'autoRoles',
-      actionName: 'list',
-      message: this.message,
-    });
+    await this.chaos.listen().toPromise();
+    await this.chaos.getService('core', 'PermissionsService')
+      .addUser(this.message.guild, 'admin', this.message.author).toPromise();
+    await this.chaos.getService('core', 'PluginService')
+      .enablePlugin(this.message.guild.id, 'autoRoles').toPromise();
   });
 
-  it('emits an embed', async function () {
-    const response = await this.runTest$().toPromise();
-    expect(response).to.have.property('embed');
-  });
-
-  describe('roles list', function () {
-    it('has section for the join roles', async function () {
-      const response = await this.runTest$().toPromise();
-      const field = response.embed.fields
-        .find((field) => field.name === 'Join Roles');
-      expect(field).to.not.be.undefined;
+  context('!config autoRoles list', function () {
+    beforeEach(function () {
+      this.message.content = '!config autoRoles list';
     });
 
-    describe('join roles', function () {
-      context('when there are no roles on the list', function () {
-        it('adds a "Join Roles" field, with an empty list', async function () {
-          const response = await this.runTest$().toPromise();
-          let field = response.embed.fields
-            .find((field) => field.name === 'Join Roles');
-          expect(field.value).to.eq('[None]');
-        });
+    it('emits an embed', async function () {
+      const responses = await this.chaos.testMessage(this.message);
+      expect(responses[0]).to.have.property('embed');
+    });
+
+    describe('roles list', function () {
+      it('has section for the join roles', async function () {
+        const responses = await this.chaos.testMessage(this.message);
+        const field = responses[0].embed.fields
+          .find((field) => field.name === 'Join Roles');
+        expect(field).to.not.be.undefined;
       });
 
-      context('when there are roles on the list', function () {
-        beforeEach(async function () {
-          this.roles = [
-            {id: '0000-role-1', name: 'Role1'},
-            {id: '0000-role-2', name: 'Role2'},
-            {id: '0000-role-3', name: 'Role3'},
-          ];
-
-          for (const role of this.roles) {
-            this.guild.roles.set(role.id, role);
-            await this.autoRoleService.addJoinRole(this.guild, role).toPromise();
-          }
+      describe('join roles', function () {
+        context('when there are no roles on the list', function () {
+          it('adds a "Join Roles" field, with an empty list', async function () {
+            const responses = await this.chaos.testMessage(this.message);
+            let field = responses[0].embed.fields
+              .find((field) => field.name === 'Join Roles');
+            expect(field.value).to.eq('[None]');
+          });
         });
 
-        it('adds a "Join Roles" field, with a list of all assigned roles', async function () {
-          const response = await this.runTest$().toPromise();
-          const field = response.embed.fields
-            .find((field) => field.name === 'Join Roles');
-          expect(field.value).to.eq('Role1, Role2, Role3');
+        context('when there are roles on the list', function () {
+          beforeEach(async function () {
+            this.roles = [
+              {id: '0000-role-1', name: 'Role1'},
+              {id: '0000-role-2', name: 'Role2'},
+              {id: '0000-role-3', name: 'Role3'},
+            ];
+
+            for (const role of this.roles) {
+              this.message.guild.roles.set(role.id, role);
+              await this.autoRoleService.addJoinRole(this.message.guild, role).toPromise();
+            }
+          });
+
+          it('adds a "Join Roles" field, with a list of all assigned roles', async function () {
+            const responses = await this.chaos.testMessage(this.message);
+            const field = responses[0].embed.fields
+              .find((field) => field.name === 'Join Roles');
+            expect(field.value).to.eq('Role1, Role2, Role3');
+          });
         });
       });
     });

@@ -62,7 +62,7 @@ class RmJoinRoleAction extends ChaosCore.ConfigAction {
     if (error instanceof RoleNotAddedError) {
       return of({
         status: 400,
-        message: this.strings.notAdded(),
+        content: this.strings.notAdded(),
       });
     } else {
       return throwError(error);
