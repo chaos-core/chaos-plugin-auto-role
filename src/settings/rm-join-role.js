@@ -1,12 +1,7 @@
-const {of, throwError} = require('rxjs');
-const {flatMap, map, catchError} = require('rxjs/operators');
 const ChaosCore = require('chaos-core');
 
 const findRole = require('../lib/role-utilities').findRole;
-const {
-  AutoRoleError,
-  RoleNotAddedError,
-} = require('../lib/errors');
+const {RoleNotAddedError} = require('../lib/errors');
 
 
 class RmJoinRoleAction extends ChaosCore.ConfigAction {
@@ -29,43 +24,34 @@ class RmJoinRoleAction extends ChaosCore.ConfigAction {
     return super.strings.userRoles.configActions.rmJoinRole;
   }
 
-  run(context) {
+  async run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     let guild = context.guild;
     let roleString = context.args.role;
 
     let role = findRole(guild, roleString);
     if (!role) {
-      return of({
+      return {
         status: 404,
         content: this.strings.roleNotFound({roleString}),
-      });
+      };
     }
 
-    return of('').pipe(
-      flatMap(() => autoRoleService.removeJoinRole(guild, role)),
-      map(() => ({
+    try {
+      await autoRoleService.removeJoinRole(guild, role);
+      return {
         status: 200,
         content: this.strings.roleRemoved({roleName: role.name}),
-      })),
-      catchError((error) => {
-        if (error instanceof AutoRoleError) {
-          return this.handleAutoRoleError(error);
-        } else {
-          return throwError(error);
-        }
-      }),
-    );
-  }
-
-  handleAutoRoleError(error) {
-    if (error instanceof RoleNotAddedError) {
-      return of({
-        status: 400,
-        content: this.strings.notAdded(),
-      });
-    } else {
-      return throwError(error);
+      };
+    } catch (error) {
+      if (error instanceof RoleNotAddedError) {
+        return {
+          status: 400,
+          content: this.strings.notAdded(),
+        };
+      } else {
+        throw error;
+      }
     }
   }
 }

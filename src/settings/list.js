@@ -1,5 +1,3 @@
-const {of} = require('rxjs');
-const {map, flatMap} = require('rxjs/operators');
 const RichEmbed = require('discord.js').RichEmbed;
 const ChaosCore = require('chaos-core');
 
@@ -15,22 +13,19 @@ class ListAction extends ChaosCore.ConfigAction {
     return super.strings.userRoles.configActions.list;
   }
 
-  run(context) {
+  async run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
-    return of('').pipe(
-      flatMap(() => autoRoleService.getJoinRoles(context.guild)),
-      map((roles) => roles.map((r) => r.name)),
-      map((joinRoles) => {
-        let embed = new RichEmbed();
-        embed.addField("Join Roles", joinRoles.length >= 1 ? joinRoles.join(', ') : "[None]");
+    const roles = await autoRoleService.getJoinRoles(context.guild);
+    const joinRoles = roles.map((r) => r.name);
 
-        return {
-          status: 200,
-          content: this.strings.configuredRoles(),
-          embed: embed,
-        };
-      }),
-    );
+    let embed = new RichEmbed();
+    embed.addField("Join Roles", joinRoles.length >= 1 ? joinRoles.join(', ') : "[None]");
+
+    return {
+      status: 200,
+      content: this.strings.configuredRoles(),
+      embed: embed,
+    };
   }
 }
 
