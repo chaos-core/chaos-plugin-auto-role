@@ -41,7 +41,7 @@ describe('Config: addJoinRole', function () {
     context('when the role is already on the list', function () {
       beforeEach(async function () {
         this.message.guild.roles.set(this.role.id, this.role);
-        await this.autoRoleService.addJoinRole(this.message.guild, this.role).toPromise();
+        await this.autoRoleService.addJoinRole(this.message.guild, this.role);
       });
 
       it('emits an error message', async function () {

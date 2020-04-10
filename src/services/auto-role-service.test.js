@@ -27,7 +27,7 @@ describe('AutoRoleService', function () {
       });
 
       it('returns an empty array', async function () {
-        const roleIds = await this.autoRoleService.getJoinRoleIds(this.guild).toPromise();
+        const roleIds = await this.autoRoleService.getJoinRoleIds(this.guild);
         expect(roleIds).to.deep.equal([]);
       });
     });
@@ -44,7 +44,7 @@ describe('AutoRoleService', function () {
       });
 
       it('returns an array of role ids', async function () {
-        const roleIds = await this.autoRoleService.getJoinRoleIds(this.guild).toPromise();
+        const roleIds = await this.autoRoleService.getJoinRoleIds(this.guild);
         expect(roleIds).to.deep.equal(this.roleIds);
       });
     });
@@ -60,7 +60,7 @@ describe('AutoRoleService', function () {
     });
 
     it('it saves the role id list', async function () {
-      await this.autoRoleService.setJoinRoleIds(this.guild, this.roleIds).toPromise();
+      await this.autoRoleService.setJoinRoleIds(this.guild, this.roleIds);
       const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
       expect(roleIds).to.deep.equal(this.roleIds);
     });
@@ -73,7 +73,7 @@ describe('AutoRoleService', function () {
       });
 
       it('emits an empty array', async function () {
-        const roleIds = await this.autoRoleService.getJoinRoles(this.guild).toPromise();
+        const roleIds = await this.autoRoleService.getJoinRoles(this.guild);
         expect(roleIds).to.deep.equal([]);
       });
     });
@@ -92,7 +92,7 @@ describe('AutoRoleService', function () {
       });
 
       it('emits an array of roles for each id', async function () {
-        const roleIds = await this.autoRoleService.getJoinRoles(this.guild).toPromise();
+        const roleIds = await this.autoRoleService.getJoinRoles(this.guild);
         expect(roleIds).to.deep.equal(this.roles);
       });
 
@@ -102,7 +102,7 @@ describe('AutoRoleService', function () {
         });
 
         it('emits an array of roles that were found', async function () {
-          const roleIds = await this.autoRoleService.getJoinRoles(this.guild).toPromise();
+          const roleIds = await this.autoRoleService.getJoinRoles(this.guild);
           expect(roleIds).to.deep.equal(this.roles.slice(1));
         });
       });
@@ -115,7 +115,7 @@ describe('AutoRoleService', function () {
     });
 
     it('it updates the join role list', async function () {
-      await this.autoRoleService.addJoinRole(this.guild, this.role).toPromise();
+      await this.autoRoleService.addJoinRole(this.guild, this.role);
       const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
       expect(roleIds).to.deep.equal([this.role.id]);
     });
@@ -127,7 +127,7 @@ describe('AutoRoleService', function () {
       });
 
       it('appends the role to the list', async function () {
-        await this.autoRoleService.addJoinRole(this.guild, this.role).toPromise();
+        await this.autoRoleService.addJoinRole(this.guild, this.role);
         const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
         expect(roleIds).to.deep.equal([
           this.preExistingRole.id,
@@ -143,7 +143,7 @@ describe('AutoRoleService', function () {
 
       it('throws an RoleAlreadyAddedError', async function () {
         try {
-          await this.autoRoleService.addJoinRole(this.guild, this.role).toPromise();
+          await this.autoRoleService.addJoinRole(this.guild, this.role);
         } catch (error) {
           expect(error).to.be.an.instanceof(RoleAlreadyAddedError);
           return;
@@ -161,7 +161,7 @@ describe('AutoRoleService', function () {
     });
 
     it('it updates the join role list', async function () {
-      await this.autoRoleService.removeJoinRole(this.guild, this.role).toPromise();
+      await this.autoRoleService.removeJoinRole(this.guild, this.role);
       const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
       expect(roleIds).to.deep.equal([]);
     });
@@ -173,7 +173,7 @@ describe('AutoRoleService', function () {
       });
 
       it('appends the role to the list', async function () {
-        await this.autoRoleService.removeJoinRole(this.guild, this.role).toPromise();
+        await this.autoRoleService.removeJoinRole(this.guild, this.role);
         const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
         expect(roleIds).to.deep.equal([this.preExistingRole.id]);
       });
@@ -186,7 +186,7 @@ describe('AutoRoleService', function () {
 
       it('throws an RoleNotAddedError', async function () {
         try {
-          await this.autoRoleService.removeJoinRole(this.guild, this.role).toPromise();
+          await this.autoRoleService.removeJoinRole(this.guild, this.role);
         } catch (error) {
           expect(error).to.be.an.instanceof(RoleNotAddedError);
           return;

@@ -18,9 +18,8 @@ class ListAction extends ChaosCore.ConfigAction {
   run(context) {
     const autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
     return of('').pipe(
-      flatMap(() => autoRoleService.getJoinRoles(context.guild).pipe(
-        map((roles) => roles.map((r) => r.name)),
-      )),
+      flatMap(() => autoRoleService.getJoinRoles(context.guild)),
+      map((roles) => roles.map((r) => r.name)),
       map((joinRoles) => {
         let embed = new RichEmbed();
         embed.addField("Join Roles", joinRoles.length >= 1 ? joinRoles.join(', ') : "[None]");

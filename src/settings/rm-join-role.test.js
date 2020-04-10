@@ -17,7 +17,7 @@ describe('Config: rmJoinRole', function () {
       .addUser(this.message.guild, 'admin', this.message.author).toPromise();
     await this.chaos.getService('core', 'PluginService')
       .enablePlugin(this.message.guild.id, 'autoRoles').toPromise();
-    await this.autoRoleService.addJoinRole(this.message.guild, this.role).toPromise();
+    await this.autoRoleService.addJoinRole(this.message.guild, this.role);
   });
 
   context('!config autoRoles rmJoinRole', function () {
@@ -41,7 +41,7 @@ describe('Config: rmJoinRole', function () {
     context('when the role is not on the list', function () {
       beforeEach(async function () {
         this.message.guild.roles.set(this.role.id, this.role);
-        await this.autoRoleService.removeJoinRole(this.message.guild, this.role).toPromise();
+        await this.autoRoleService.removeJoinRole(this.message.guild, this.role);
       });
 
       it('emits an error message', async function () {

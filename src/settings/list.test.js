@@ -56,7 +56,7 @@ describe('Config: list', function () {
 
             for (const role of this.roles) {
               this.message.guild.roles.set(role.id, role);
-              await this.autoRoleService.addJoinRole(this.message.guild, role).toPromise();
+              await this.autoRoleService.addJoinRole(this.message.guild, role);
             }
           });
 
