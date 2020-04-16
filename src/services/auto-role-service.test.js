@@ -23,7 +23,7 @@ describe('AutoRoleService', function () {
   describe('#getJoinRoleIds', function () {
     context('when there are no roles', function () {
       beforeEach(async function () {
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, []).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, []);
       });
 
       it('returns an empty array', async function () {
@@ -40,7 +40,7 @@ describe('AutoRoleService', function () {
           '0000-role-3',
         ];
 
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roleIds).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roleIds);
       });
 
       it('returns an array of role ids', async function () {
@@ -61,7 +61,7 @@ describe('AutoRoleService', function () {
 
     it('it saves the role id list', async function () {
       await this.autoRoleService.setJoinRoleIds(this.guild, this.roleIds);
-      const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
+      const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles);
       expect(roleIds).to.deep.equal(this.roleIds);
     });
   });
@@ -69,7 +69,7 @@ describe('AutoRoleService', function () {
   describe('#getJoinRoles', function () {
     context('when there are no roles', function () {
       beforeEach(async function () {
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, []).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, []);
       });
 
       it('emits an empty array', async function () {
@@ -88,7 +88,7 @@ describe('AutoRoleService', function () {
 
         this.roles.forEach((role) => this.guild.roles.set(role.id, role));
 
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roles.map((role) => role.id)).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, this.roles.map((role) => role.id));
       });
 
       it('emits an array of roles for each id', async function () {
@@ -116,19 +116,19 @@ describe('AutoRoleService', function () {
 
     it('it updates the join role list', async function () {
       await this.autoRoleService.addJoinRole(this.guild, this.role);
-      const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
+      const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles);
       expect(roleIds).to.deep.equal([this.role.id]);
     });
 
     context('when there are other roles on the list', function () {
       beforeEach(async function () {
         this.preExistingRole = {id: '00000-role-2', name: 'role-2'};
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.preExistingRole.id]).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.preExistingRole.id]);
       });
 
       it('appends the role to the list', async function () {
         await this.autoRoleService.addJoinRole(this.guild, this.role);
-        const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
+        const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles);
         expect(roleIds).to.deep.equal([
           this.preExistingRole.id,
           this.role.id,
@@ -138,7 +138,7 @@ describe('AutoRoleService', function () {
 
     context('when the role is already on the list', function () {
       beforeEach(async function () {
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id]).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id]);
       });
 
       it('throws an RoleAlreadyAddedError', async function () {
@@ -157,31 +157,31 @@ describe('AutoRoleService', function () {
   describe('#removeJoinRole', function () {
     beforeEach(async function () {
       this.role = {id: '00000-role-1', name: 'role-1'};
-      await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id]).toPromise();
+      await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id]);
     });
 
     it('it updates the join role list', async function () {
       await this.autoRoleService.removeJoinRole(this.guild, this.role);
-      const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
+      const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles);
       expect(roleIds).to.deep.equal([]);
     });
 
     context('when there are other roles on the list', function () {
       beforeEach(async function () {
         this.preExistingRole = {id: '00000-role-2', name: 'role-2'};
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id, this.preExistingRole.id]).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, [this.role.id, this.preExistingRole.id]);
       });
 
       it('appends the role to the list', async function () {
         await this.autoRoleService.removeJoinRole(this.guild, this.role);
-        const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles).toPromise();
+        const roleIds = await this.chaos.getGuildData(this.guild.id, DataKeys.JoinRoles);
         expect(roleIds).to.deep.equal([this.preExistingRole.id]);
       });
     });
 
     context('when the role is not on the list', function () {
       beforeEach(async function () {
-        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, []).toPromise();
+        await this.chaos.setGuildData(this.guild.id, DataKeys.JoinRoles, []);
       });
 
       it('throws an RoleNotAddedError', async function () {

@@ -7,3 +7,4 @@ data/
 \.nyc_output/
 
 *.tgz
+/yarn-error.log

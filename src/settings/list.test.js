@@ -11,11 +11,11 @@ describe('Config: list', function () {
 
     this.message = new MockMessage();
 
-    await this.chaos.listen().toPromise();
+    await this.chaos.listen();
     await this.chaos.getService('core', 'PermissionsService')
-      .addUser(this.message.guild, 'admin', this.message.author).toPromise();
+      .addUser(this.message.guild, 'admin', this.message.author);
     await this.chaos.getService('core', 'PluginService')
-      .enablePlugin(this.message.guild.id, 'autoRoles').toPromise();
+      .enablePlugin(this.message.guild.id, 'autoRoles');
   });
 
   context('!config autoRoles list', function () {
