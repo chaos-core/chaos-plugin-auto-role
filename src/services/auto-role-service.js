@@ -13,10 +13,17 @@ class AutoRoleService extends Service {
     this.chaos.on("guildMemberAdd", async (newMember) => this.handleMemberJoin(newMember));
   }
 
+  async isPluginEnabled(guild) {
+    return this.chaos.getService('core', 'PluginService')
+      .isPluginEnabled(guild.id, 'autoRoles');
+  }
+
   async handleMemberJoin(newMember) {
-    const roles = this.getJoinRoles(newMember.guild);
-    for (const role of roles) {
-      await newMember.addRole(role);
+    if(await this.isPluginEnabled(newMember.guild)) {
+      const roles = await this.getJoinRoles(newMember.guild);
+      for (const role of roles) {
+        await newMember.addRole(role);
+      }
     }
   }
 

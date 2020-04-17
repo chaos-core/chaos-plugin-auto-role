@@ -1,6 +1,6 @@
 {
   "name": "chaos-plugin-auto-role",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Auto Role assignment plugin for ChaosCore Discord Bots",
   "main": "index.js",
   "files": [

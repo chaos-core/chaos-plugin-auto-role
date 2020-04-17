@@ -1,23 +1,87 @@
 const ChaosCore = require('chaos-core');
 
-const AutoRoleService = require('./auto-role-service');
 const DataKeys = require('../lib/data-keys');
-
-const {
-  RoleAlreadyAddedError,
-  RoleNotAddedError,
-} = require('../lib/errors');
+const {RoleAlreadyAddedError, RoleNotAddedError} = require('../lib/errors');
 
 describe('AutoRoleService', function () {
-  beforeEach(function () {
+  beforeEach(async function () {
     this.chaos = ChaosCore.test.createChaosStub();
-    this.autoRoleService = new AutoRoleService(this.chaos);
+    this.chaos.addPlugin(require('../plugin'));
+
+    this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
 
     this.guild = {
       id: '0000-guild-1',
       name: 'Test Guild',
       roles: new Map(),
     };
+
+    await this.chaos.getService('core', 'PluginService')
+      .enablePlugin(this.guild.id, 'autoRoles');
+  });
+
+  describe("on guildMemberAdd", function () {
+    beforeEach(async function () {
+      this.joinRole = {id: 'joinRoleId'};
+      this.guild.roles.set(this.joinRole.id, this.joinRole);
+
+      this.member = {
+        guild: this.guild,
+        addRole: async () => {},
+      };
+
+      await this.autoRoleService.addJoinRole(this.guild, this.joinRole);
+    });
+
+    it('assigns the auto join role', async function () {
+      sinon.spy(this.member, 'addRole');
+
+      await this.chaos.emit('guildMemberAdd', this.member);
+      expect(this.member.addRole).to.have.been.calledWith(this.joinRole);
+    });
+
+    context('when there are no roles', function () {
+      beforeEach(async function () {
+        await this.autoRoleService.removeJoinRole(this.guild, this.joinRole);
+      });
+
+      it("does not change the user's roles", async function () {
+        sinon.spy(this.member, 'addRole');
+
+        await this.chaos.emit('guildMemberAdd', this.member);
+        expect(this.member.addRole).not.to.have.been.called;
+      });
+    });
+
+    context('when the plugin is disabled', function () {
+      beforeEach(async function () {
+        await this.chaos.getService('core', 'PluginService')
+          .disablePlugin(this.guild.id, 'autoRoles');
+      });
+
+      it("does not add the role", async function () {
+        sinon.spy(this.member, 'addRole');
+
+        await this.chaos.emit('guildMemberAdd', this.member);
+        expect(this.member.addRole).not.to.have.been.called;
+      });
+    });
+
+    context('when there are multiple roles to assign', function () {
+      beforeEach(async function () {
+        this.joinRole2 = {id: 'joinRole2Id'};
+        this.guild.roles.set(this.joinRole2.id, this.joinRole2);
+        await this.autoRoleService.addJoinRole(this.guild, this.joinRole2);
+      });
+
+      it("adds all roles", async function () {
+        sinon.spy(this.member, 'addRole');
+
+        await this.chaos.emit('guildMemberAdd', this.member);
+        expect(this.member.addRole).to.have.been.calledWith(this.joinRole);
+        expect(this.member.addRole).to.have.been.calledWith(this.joinRole2);
+      });
+    });
   });
 
   describe('#getJoinRoleIds', function () {
