@@ -1,5 +1,5 @@
 const ChaosCore = require("chaos-core");
-const {MockMessage} = require("chaos-core").test.discordMocks;
+const Discord = require("discord.js");
 
 const AutoRolesPlugin = require('../plugin');
 
@@ -9,7 +9,8 @@ describe('Config: rmJoinRole', function () {
     this.chaos.addPlugin(AutoRolesPlugin);
     this.autoRoleService = this.chaos.getService('autoRoles', 'AutoRoleService');
 
-    this.message = new MockMessage();
+    this.message = this.chaos.createMessage();
+    this.message.guild.roles = new Discord.Collection();
     this.role = {id: '11111', name: 'Role1'};
 
     await this.chaos.listen();
